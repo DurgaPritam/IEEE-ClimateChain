@@ -8,7 +8,7 @@ const accounts = DEPLOYER_PRIVATE_KEY ? [DEPLOYER_PRIVATE_KEY] : [];
 module.exports = {
   solidity: { version: "0.8.24", settings: { optimizer: { enabled: true, runs: 200 } } },
   networks: {
-    amoy: { url: AMOY_RPC_URL || "https://rpc-amoy.polygon.technology", accounts, chainId: 80002 },
+    amoy: { url: AMOY_RPC_URL || "https://polygon-amoy-bor-rpc.publicnode.com", accounts, chainId: 80002, gasPrice: 30_000_000_000 },
     sepolia: { url: SEPOLIA_RPC_URL || "https://rpc.sepolia.org", accounts, chainId: 11155111 },
   },
   etherscan: {

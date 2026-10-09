@@ -115,7 +115,7 @@ On the synthetic data, every injected fraud is blocked and no honest month is bl
 
 Every state change emits an event for the audit trail.
 
-Deployed address and explorer link: *TBD (Polygon Amoy)*.
+**Deployed on Polygon Amoy testnet:** [`0xdA8D576790524F96Ee6DFC5365C8aF6Be33d4230`](https://amoy.polygonscan.com/address/0xdA8D576790524F96Ee6DFC5365C8aF6Be33d4230) (address and ABI in [contracts/deployments/amoy.json](contracts/deployments/amoy.json)). Set `CHAIN_NAMESPACE` to rehearse with fresh on-chain plant IDs without redeploying. Transactions use a 30 gwei tip (`GAS_TIP_GWEI`).
 
 ## Why blockchain?
 

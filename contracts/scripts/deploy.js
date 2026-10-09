@@ -10,13 +10,14 @@ async function main() {
   await reg.waitForDeployment();
   const address = await reg.getAddress();
   const { abi } = await artifacts.readArtifact("VerdantRegistry");
+  const receipt = await reg.deploymentTransaction().wait();
 
   const out = path.join(__dirname, "..", "deployments", `${network.name}.json`);
   fs.mkdirSync(path.dirname(out), { recursive: true });
   fs.writeFileSync(out, JSON.stringify({
     network: network.name, chainId: Number(network.config.chainId ?? 31337),
     address, deployer: deployer.address, deployedAt: new Date().toISOString(),
-    tx: reg.deploymentTransaction().hash, abi,
+    tx: reg.deploymentTransaction().hash, deployBlock: receipt.blockNumber, abi,
   }, null, 2));
   console.log(`VerdantRegistry deployed to ${address} on ${network.name}\n-> ${out}`);
 }

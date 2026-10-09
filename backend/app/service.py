@@ -16,6 +16,7 @@ from app.sectors import get_sector
 from app.store import Allocation, Plant, Report, ReportStatus, Store
 from app.trust import merkle
 from app.trust.canonical import canonical_bytes, sha256_hex
+from app.trust import keystore
 from app.trust.signatures import hybrid
 
 SCHEMA = "verdant-x/report/v1"
@@ -56,18 +57,20 @@ def _schemes() -> tuple[str, ...]:
 
 
 class VerdantService:
-    def __init__(self, store: Store | None = None, chain: ChainClient | None = None):
+    def __init__(self, store: Store | None = None, chain: ChainClient | None = None, persist_keys: bool | None = None):
         self.store = store or Store()
         self.chain = chain or get_chain()
         self.keys: dict[str, hybrid.HybridKey] = {}
         self.guards: dict[str, Guard] = {}
-        self.verifier_key = hybrid.generate_hybrid_key("verifier:accredited-demo", _schemes())
+        # Real chains need stable key fingerprints across restarts; the in-memory chain does not.
+        self.persist_keys = persist_keys if persist_keys is not None else self.chain.name != "memory"
+        self.verifier_key = self._key("verifier:accredited-demo")
         self.chain.set_verifier(self.verifier_key.key_fingerprint)
 
     # ---- plants ----
 
     def register_plant(self, plant: Plant) -> Plant:
-        key = hybrid.generate_hybrid_key(f"plant:{plant.id}", _schemes())
+        key = self._key(f"plant:{plant.id}")
         self.keys[plant.id] = key
         plant.key_fingerprint = key.key_fingerprint
         self.store.plants[plant.id] = plant
@@ -205,6 +208,11 @@ class VerdantService:
         )
 
     # ---- helpers ----
+
+    def _key(self, signer: str) -> hybrid.HybridKey:
+        if self.persist_keys:
+            return keystore.load_or_create(signer, _schemes())
+        return hybrid.generate_hybrid_key(signer, _schemes())
 
     def _plant(self, plant_id: str) -> Plant:
         if plant_id not in self.store.plants:
