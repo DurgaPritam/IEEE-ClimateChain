@@ -21,7 +21,10 @@ brew install liboqs          # Open Quantum Safe C library (or use the OQS Docke
 make setup                   # Python venv + npm install
 make test                    # backend (pytest) + contract (Hardhat) tests
 make api                     # seeded demo API -> http://localhost:8000/docs
+make web                     # web app -> http://localhost:3000 (second terminal)
 ```
+
+`make demo` runs both on the offline in-memory chain. To run on Polygon Amoy instead, fill in `.env` (see below) and run `make api` with `CHAIN_BACKEND=web3`.
 
 By default the backend uses an in-memory chain that enforces the same rules as the contract. To use a real chain, copy `.env.example` to `.env`, then:
 
@@ -45,7 +48,11 @@ backend/app/
   api/routes.py    HTTP API grouped by role (plant, verifier, importer, regulator, demo)
   data/synthetic.py  3 plants × 24 months with labelled injected frauds
 contracts/         VerdantRegistry.sol, tests, deploy script
-frontend/          Next.js app (in progress)
+frontend/          Next.js + Tailwind app (design tokens from Claude Design, dark first)
+  app/(app)/       role screens: plant/{submit,report,sign,allocate,history}, verifier, importer, regulator
+  app/(public)/d/  importer disclosure link (no login) + CBAM cost comparison (3 layouts)
+  app/story/       full-screen fraud moments for the video, driven by live data
+  lib/verify.ts    in-browser verification: ML-DSA-65 + ECDSA (@noble), RFC 8785, Merkle proofs
 ```
 
 **Extending.** To add steel, implement `Sector` in `sectors/steel.py`, add `config/steel.yaml`, add a rule list in `guard/rules/steel.py`, and register all three. The trust layer, chain and API stay unchanged. Signature schemes are selected by `SIGNATURE_SCHEMES`. Chain backends are selected by `CHAIN_BACKEND`.
@@ -103,6 +110,16 @@ On the synthetic data, every injected fraud is blocked and no honest month is bl
 - **Merkle commitment:** salted leaves `H(0x00‖salt‖jcs({k,v}))` and internal nodes `H(0x01‖l‖r)`.
 - **Off-chain verification:** PQ signatures are verified off-chain. On-chain ML-DSA verification is too expensive today, so the chain stores only fingerprints.
 - **Key handling:** demo keys are generated in memory at startup. In production they belong in an HSM or KMS, one per installation and per verifier.
+
+## Importer verification in the browser
+
+The disclosure page does not trust the VERDANT-X server. `frontend/lib/verify.ts` re-checks everything locally with audited `@noble` libraries:
+- the report hash, recomputed from the RFC 8785 canonical header
+- **both** hybrid signatures: ML-DSA-65 (FIPS 204) and ECDSA P-256
+- the plant key fingerprint against the header
+- every disclosed field's Merkle proof
+
+The backend signs with liboqs and `cryptography`, and the browser verifies with `@noble/post-quantum` and `@noble/curves`. These are independent implementations, so they double as a cross-check of the standards. Changing one disclosed value or one header byte makes the verification fail.
 
 ## Smart contract
 

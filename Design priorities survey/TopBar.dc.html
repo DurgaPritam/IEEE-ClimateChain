@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet><link rel="stylesheet" href="tokens.css"></helmet>
+<header style="background:var(--vx-surface);border-bottom:1px solid var(--vx-line);font-family:var(--vx-font-sans);color:var(--vx-text);position:relative">
+  <div style="display:flex;align-items:center;gap:20px;padding:12px 28px;min-height:36px;flex-wrap:wrap">
+    <div style="display:flex;align-items:center;gap:14px">
+      <div style="display:flex;align-items:center;gap:10px">
+        <span style="position:relative;width:22px;height:22px;box-sizing:border-box;border:1.5px solid var(--vx-accent);border-radius:3px;display:inline-block"><span style="position:absolute;right:3px;bottom:3px;width:8px;height:8px;background:var(--vx-accent);border-radius:1px"></span></span>
+        <span style="font:600 15px/1 var(--vx-font-sans);letter-spacing:0.14em">VERDANT<span style="color:var(--vx-accent)">-X</span></span>
+      </div>
+      <span style="font:500 10px/1 var(--vx-font-mono);letter-spacing:0.08em;color:var(--vx-warn);border:1px solid var(--vx-warn);border-radius:3px;padding:4px 6px;text-transform:uppercase">Synthetic demo data</span>
+    </div>
+    <sc-if value="{{ notPublic }}" hint-placeholder-val="{{ true }}">
+      <nav style="display:flex;padding:3px;gap:2px;background:var(--vx-bg);border:1px solid var(--vx-line);border-radius:8px">
+        <sc-for list="{{ roles }}" as="r" hint-placeholder-count="4">
+          <sc-if value="{{ r.active }}"><button onClick="{{ r.select }}" style="border:0;cursor:pointer;padding:7px 14px;border-radius:6px;background:var(--vx-surface-2);color:var(--vx-text);font:500 13px/1 var(--vx-font-sans);box-shadow:inset 0 0 0 1px var(--vx-line)">{{ r.label }}</button></sc-if>
+          <sc-if value="{{ r.inactive }}"><button onClick="{{ r.select }}" style="border:0;cursor:pointer;padding:7px 14px;border-radius:6px;background:transparent;color:var(--vx-text-3);font:400 13px/1 var(--vx-font-sans)" style-hover="color:var(--vx-text)">{{ r.label }}</button></sc-if>
+        </sc-for>
+      </nav>
+    </sc-if>
+    <sc-if value="{{ isPublic }}">
+      <span style="display:inline-flex;align-items:center;gap:8px;font-size:13px;color:var(--vx-text-2)"><span style="width:7px;height:7px;border-radius:50%;border:1.5px solid var(--vx-text-3)"></span>EU importer · public disclosure link · no login</span>
+    </sc-if>
+    <div style="flex:1"></div>
+    <sc-if value="{{ showPlant }}" hint-placeholder-val="{{ true }}">
+      <div style="position:relative">
+        <button onClick="{{ togglePlant }}" style="display:flex;align-items:center;gap:10px;height:34px;padding:0 12px;border:1px solid var(--vx-line);border-radius:7px;background:var(--vx-bg);color:var(--vx-text);cursor:pointer;font:500 13px var(--vx-font-sans)">
+          <span style="font:400 11px var(--vx-font-mono);color:var(--vx-text-3)">{{ plantId }}</span>{{ plantName }}<span style="color:var(--vx-text-3);font-size:10px">▾</span>
+        </button>
+        <sc-if value="{{ open }}">
+          <div style="position:absolute;right:0;top:40px;z-index:20;width:300px;background:var(--vx-surface);border:1px solid var(--vx-line);border-radius:8px;box-shadow:var(--vx-shadow);padding:4px">
+            <sc-for list="{{ plants }}" as="p">
+              <button onClick="{{ p.select }}" style="display:flex;width:100%;align-items:center;gap:10px;padding:9px 10px;border:0;border-radius:5px;background:transparent;color:var(--vx-text);cursor:pointer;text-align:left;font:400 13px var(--vx-font-sans)" style-hover="background:var(--vx-surface-2)"><span style="font:400 11px var(--vx-font-mono);color:var(--vx-text-3);width:78px">{{ p.id }}</span><span style="flex:1">{{ p.name }}</span><span style="color:var(--vx-accent)">{{ p.mark }}</span></button>
+            </sc-for>
+          </div>
+        </sc-if>
+      </div>
+    </sc-if>
+    <span style="display:inline-flex;align-items:center;gap:8px;height:34px;padding:0 12px;border:1px solid var(--vx-line);border-radius:7px;font:500 12px var(--vx-font-sans);color:var(--vx-text-2)"><span style="width:7px;height:7px;border-radius:50%;background:var(--vx-pass)"></span>{{ chain }}</span>
+  </div>
+  <sc-if value="{{ hasTabs }}" hint-placeholder-val="{{ true }}">
+    <div style="display:flex;gap:4px;padding:0 28px;border-top:1px solid var(--vx-line-soft);overflow-x:auto">
+      <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="5">
+        <sc-if value="{{ t.active }}"><span style="padding:12px 12px 11px;font:500 13px/1 var(--vx-font-sans);color:var(--vx-text);border-bottom:2px solid var(--vx-accent);white-space:nowrap">{{ t.label }}</span></sc-if>
+        <sc-if value="{{ t.inactive }}"><span style="padding:12px 12px 11px;font:400 13px/1 var(--vx-font-sans);color:var(--vx-text-3);border-bottom:2px solid transparent;white-space:nowrap">{{ t.label }}</span></sc-if>
+      </sc-for>
+    </div>
+  </sc-if>
+</header>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1440,&quot;height&quot;:120},&quot;role&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;plant&quot;,&quot;verifier&quot;,&quot;importer&quot;,&quot;regulator&quot;],&quot;default&quot;:&quot;plant&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;tab&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;submit&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;plant&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Anatolia Cement – Ankara&quot;,&quot;Aegean Cement – Izmir&quot;,&quot;Marmara Cement – Kocaeli&quot;],&quot;default&quot;:&quot;Anatolia Cement – Ankara&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;chain&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Polygon Amoy testnet&quot;,&quot;Local chain&quot;],&quot;default&quot;:&quot;Polygon Amoy testnet&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;publicLink&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;}}">
+class Component extends DCLogic {
+  state = { role: null, plant: null, open: false };
+  renderVals() {
+    const role = this.state.role ?? this.props.role ?? 'plant';
+    const tab = this.props.tab ?? 'submit';
+    const pub = !!this.props.publicLink;
+    const PLANTS = [
+      { id: 'TR-ANA-01', name: 'Anatolia Cement – Ankara' },
+      { id: 'TR-AEG-02', name: 'Aegean Cement – Izmir' },
+      { id: 'TR-MAR-03', name: 'Marmara Cement – Kocaeli' },
+    ];
+    const pIdx = this.state.plant ?? Math.max(0, PLANTS.findIndex(p => p.name.startsWith((this.props.plant ?? 'Anatolia').split(' ')[0])));
+    const roles = [['plant', 'Plant operator'], ['verifier', 'Verifier'], ['importer', 'EU importer'], ['regulator', 'Regulator']]
+      .map(([id, label]) => ({ label, active: id === role, inactive: id !== role, select: () => this.setState({ role: id }) }));
+    const tabsBy = {
+      plant: [['submit', 'Submit month'], ['report', 'Report'], ['sign', 'Sign & anchor'], ['allocate', 'Allocate tonnes'], ['history', 'History']],
+      verifier: [['queue', 'Review queue'], ['review', 'Report review']],
+      importer: [['disclosure', 'Disclosure package'], ['cost', 'CBAM cost']],
+      regulator: [['audit', 'Audit trail'], ['reports', 'Reports'], ['blocked', 'Blocked submissions']],
+    };
+    const tabs = (tabsBy[role] || []).map(([id, label]) => ({ label, active: id === tab, inactive: id !== tab }));
+    return {
+      roles, tabs, hasTabs: tabs.length > 0, notPublic: !pub, isPublic: pub,
+      showPlant: !pub && role !== 'importer',
+      plantId: PLANTS[pIdx].id, plantName: PLANTS[pIdx].name,
+      plants: PLANTS.map((p, i) => ({ ...p, mark: i === pIdx ? '✓' : '', select: () => this.setState({ plant: i, open: false }) })),
+      open: this.state.open, togglePlant: () => this.setState(s => ({ open: !s.open })),
+      chain: this.props.chain ?? 'Polygon Amoy testnet',
+    };
+  }
+}
+</script>
+</body>
+</html>

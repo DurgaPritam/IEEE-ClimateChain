@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet><link rel="stylesheet" href="tokens.css"></helmet>
+<sc-if value="{{ isPass }}" hint-placeholder-val="{{ true }}"><span style="display:inline-flex;align-items:center;gap:7px;height:24px;padding:0 10px 0 6px;border-radius:999px;background:var(--vx-pass-bg);color:var(--vx-pass);font:500 12px/1 var(--vx-font-sans);white-space:nowrap;box-sizing:border-box"><span style="width:14px;height:14px;box-sizing:border-box;border:1.5px solid currentColor;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:8px;font-weight:700">✓</span>{{ label }}</span></sc-if>
+<sc-if value="{{ isWarn }}"><span style="display:inline-flex;align-items:center;gap:7px;height:24px;padding:0 10px 0 7px;border-radius:999px;background:var(--vx-warn-bg);color:var(--vx-warn);font:500 12px/1 var(--vx-font-sans);white-space:nowrap;box-sizing:border-box"><span style="font-size:11px;line-height:1">▲</span>{{ label }}</span></sc-if>
+<sc-if value="{{ isBlock }}"><span style="display:inline-flex;align-items:center;gap:7px;height:24px;padding:0 10px 0 6px;border-radius:4px;background:var(--vx-block);color:var(--vx-on-status);font:600 12px/1 var(--vx-font-sans);white-space:nowrap;box-sizing:border-box"><span style="width:14px;height:14px;border-radius:2px;background:var(--vx-on-status);color:var(--vx-block);display:inline-flex;align-items:center;justify-content:center;font-size:9px;font-weight:700">✕</span>{{ label }}</span></sc-if>
+<sc-if value="{{ isSigned }}"><span style="display:inline-flex;align-items:center;gap:7px;height:24px;padding:0 10px 0 8px;border-radius:999px;border:1px solid var(--vx-signed);color:var(--vx-signed);font:500 12px/1 var(--vx-font-sans);white-space:nowrap;box-sizing:border-box"><span style="font-size:10px;line-height:1">◆</span>{{ label }}</span></sc-if>
+<sc-if value="{{ isAnchored }}"><span style="display:inline-flex;align-items:center;gap:7px;height:24px;padding:0 10px 0 7px;border-radius:999px;border:1px dashed var(--vx-anchored);background:var(--vx-anchored-bg);color:var(--vx-anchored);font:500 12px/1 var(--vx-font-sans);white-space:nowrap;box-sizing:border-box"><span style="width:11px;height:11px;box-sizing:border-box;border:1.5px dashed currentColor;border-radius:50%"></span>{{ label }}</span></sc-if>
+<sc-if value="{{ isVerified }}"><span style="display:inline-flex;align-items:center;gap:6px;height:24px;padding:0 10px 0 8px;border-radius:999px;background:var(--vx-verified);color:var(--vx-on-status);font:600 12px/1 var(--vx-font-sans);white-space:nowrap;box-sizing:border-box"><span style="font-size:10px;font-weight:700;letter-spacing:-2px">✓✓</span><span style="margin-left:2px">{{ label }}</span></span></sc-if>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:220,&quot;height&quot;:40},&quot;status&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;pass&quot;,&quot;warn&quot;,&quot;block&quot;,&quot;signed&quot;,&quot;anchored&quot;,&quot;verified&quot;],&quot;default&quot;:&quot;pass&quot;,&quot;tsType&quot;:&quot;'pass'|'warn'|'block'|'signed'|'anchored'|'verified'&quot;},&quot;label&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;&quot;,&quot;tsType&quot;:&quot;string&quot;}}">
+class Component extends DCLogic {
+  renderVals() {
+    const s = this.props.status ?? 'pass';
+    const labels = { pass: 'Pass', warn: 'Needs review', block: 'Blocked', signed: 'Signed', anchored: 'Anchored · pending', verified: 'Verified · co-signed' };
+    return {
+      isPass: s === 'pass', isWarn: s === 'warn', isBlock: s === 'block',
+      isSigned: s === 'signed', isAnchored: s === 'anchored', isVerified: s === 'verified',
+      label: this.props.label ?? labels[s] ?? s,
+    };
+  }
+}
+</script>
+</body>
+</html>

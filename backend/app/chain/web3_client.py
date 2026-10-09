@@ -40,6 +40,7 @@ class Web3Chain:
         self.w3.middleware_onion.inject(ExtraDataToPOAMiddleware, layer=0)  # Polygon uses PoA-style extraData
         self.contract = self.w3.eth.contract(address=dep["address"], abi=dep["abi"])
         self.address = dep["address"]
+        self.network = network
         self.owner = self.w3.eth.account.from_key(os.environ["DEPLOYER_PRIVATE_KEY"])
         self.verifier = self.w3.eth.account.from_key(os.environ["VERIFIER_PRIVATE_KEY"])
         self.explorer = os.environ.get("EXPLORER_TX_URL", "")
@@ -65,7 +66,11 @@ class Web3Chain:
         except (ContractCustomError, ContractLogicError) as e:
             data = e.data.get("data", "") if isinstance(e.data, dict) else str(e.data or "")
             data = data.removeprefix("0x")
-            raise ChainError(self._errors.get(data[:8], "Revert"), str(e.message or data)) from e
+            name = self._errors.get(data[:8], "Revert")
+            args = {}
+            if name == "OverAllocation" and len(data) >= 8 + 128:
+                args = {"available_kg": int(data[8:72], 16), "requested_kg": int(data[72:136], 16)}
+            raise ChainError(name, str(e.message or data), args) from e
         params = {"from": account.address, "nonce": self.w3.eth.get_transaction_count(account.address)}
         if self.tip_wei is not None:
             base = self.w3.eth.get_block("latest").get("baseFeePerGas", 0)

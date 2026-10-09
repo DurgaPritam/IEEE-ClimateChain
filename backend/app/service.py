@@ -11,6 +11,7 @@ from pydantic import BaseModel
 
 from app.chain import ChainClient, ChainError, get_chain
 from app.guard import Guard
+from app.models import Severity
 from app.pricing.cbam_cost import CostComparison, compare
 from app.sectors import get_sector
 from app.store import Allocation, Plant, Report, ReportStatus, Store
@@ -32,6 +33,9 @@ class ServiceError(Exception):
 
 class DisclosurePackage(BaseModel):
     shipment_id: str
+    plant_name: str = ""
+    product: str = ""
+    private_field_groups: dict[str, int] = {}
     importer_id: str
     tonnes: float
     header: dict[str, Any]
@@ -97,7 +101,7 @@ class VerdantService:
         history = [(self._inputs(r), r.result) for r in self.store.accepted_history(plant_id, period)]
         guard = self.guards[plant_id].check(x, result, history)
         status = (ReportStatus.BLOCKED if guard.blocked
-                  else ReportStatus.FLAGGED if guard.flags else ReportStatus.READY)
+                  else ReportStatus.FLAGGED if guard.status == Severity.WARN else ReportStatus.READY)
         report = Report(id=f"{plant_id}:{period}", plant_id=plant_id, period=period, sector=plant.sector,
                         inputs=x.model_dump(), result=result, guard=guard, status=status)
         existing = self.store.reports.get(report.id)
@@ -105,6 +109,18 @@ class VerdantService:
             raise ServiceError("This period is already signed and anchored.", "already_anchored")
         self.store.reports[report.id] = report
         return report
+
+    def preview(self, plant_id: str, inputs: dict[str, Any]):
+        """Calculate without storing, signing or checking — for live form feedback."""
+        sector = get_sector(self._plant(plant_id).sector)
+        return sector.calculate(sector.inputs_model(**inputs))
+
+    def report_allocations(self, report_id: str) -> list[Allocation]:
+        return [a for a in self.store.allocations.values() if a.report_id == report_id]
+
+    def leaf_counts(self, r: Report) -> dict[str, int]:
+        total = len(self._leaves(r))
+        return {"total": total, "disclosable": len(DISCLOSED_FIELDS), "private": total - len(DISCLOSED_FIELDS)}
 
     def _leaves(self, r: Report) -> dict[str, Any]:
         cfg = get_sector(r.sector).cfg
@@ -184,6 +200,9 @@ class VerdantService:
         carbon_paid = r.inputs.get("carbon_price_paid_eur", 0.0) * a.tonnes / r.result.product_tonnes
         return DisclosurePackage(
             shipment_id=shipment_id, importer_id=a.importer_id, tonnes=a.tonnes,
+            plant_name=self.store.plants[r.plant_id].name,
+            product=f"{get_sector(r.sector).cfg['product']['name']} · CN {get_sector(r.sector).cfg['product']['cn_code']}",
+            private_field_groups=self._private_groups(leaves),
             header=r.header, report_hash=r.report_hash,
             disclosures=[commitment.disclose(f) for f in DISCLOSED_FIELDS],
             plant_signature=r.plant_signature, verifier_signature=r.verifier_signature,
@@ -209,6 +228,27 @@ class VerdantService:
 
     # ---- helpers ----
 
+    @staticmethod
+    def _private_groups(leaves: dict[str, Any]) -> dict[str, int]:
+        """Counts of private leaves by group; the importer sees that they exist, not their values."""
+        groups: dict[str, int] = {}
+        for k in leaves:
+            if k in DISCLOSED_FIELDS:
+                continue
+            if not k.startswith(("input.", "calc.", "guard.")):
+                groups["Report metadata"] = groups.get("Report metadata", 0) + 1
+                continue
+            name = k.split(".")[1]
+            g = ("Fuel mix" if name == "fuels_t" else
+                 "Clinker chemistry" if name.startswith("clinker_cao") or name.startswith("clinker_mgo") else
+                 "Electricity" if "electricity" in name or name == "kwh_per_t_cem" else
+                 "Carbon price and evidence" if name.startswith("carbon_price") else
+                 "Emissions breakdown" if k.startswith("calc.") else
+                 "Declarations and checks" if k.startswith("guard.") or name in ("declared_process_change", "reported_process_co2_t") else
+                 "Production volumes")
+            groups[g] = groups.get(g, 0) + 1
+        return groups
+
     def _key(self, signer: str) -> hybrid.HybridKey:
         if self.persist_keys:
             return keystore.load_or_create(signer, _schemes())
@@ -229,7 +269,7 @@ class VerdantService:
         try:
             return fn(*args)
         except ChainError as e:
-            raise ServiceError(str(e), f"chain:{e.error}", e.detail) from e
+            raise ServiceError(str(e), f"chain:{e.error}", e.args_ or e.detail) from e
 
 
 def signature_size_summary(sig: hybrid.HybridSignature) -> dict[str, int]:

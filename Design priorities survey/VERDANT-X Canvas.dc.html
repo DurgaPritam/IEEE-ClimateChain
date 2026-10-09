@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet><meta name="design_doc_mode" content="canvas"><link rel="stylesheet" href="tokens.css"><style>body{margin:0;background:#d8d9d5;font-family:"IBM Plex Sans",system-ui,sans-serif}a{color:#1d5c4f}a:hover{color:#0f3b32}.dv-turn{padding:48px 56px 40px;border-bottom:1px solid rgba(0,0,0,.1);scroll-margin-top:16px}.dv-thd{display:flex;align-items:baseline;gap:12px;margin:0 0 24px}.dv-tid{font:600 11px "IBM Plex Mono",ui-monospace,monospace;padding:4px 8px;background:#1a1d1c;color:#fff;border-radius:4px;text-decoration:none}.dv-tname{font:600 20px/1.2 "IBM Plex Sans",system-ui,sans-serif;color:#1a1d1c}.dv-tsub{font:400 14px/1.4 "IBM Plex Sans",system-ui,sans-serif;color:rgba(0,0,0,.55)}.dv-opts{display:flex;flex-wrap:wrap;gap:40px;align-items:flex-start}.dv-opt{flex:none;display:flex;flex-direction:column;gap:10px;scroll-margin-top:16px}.dv-oid{font:600 11px "IBM Plex Mono",ui-monospace,monospace;padding:3px 7px;background:rgba(0,0,0,.1);color:#1a1d1c;border-radius:5px;text-decoration:none}.dv-olabel{display:flex;align-items:baseline;gap:8px;font:500 14px/1.3 "IBM Plex Sans",system-ui,sans-serif;color:rgba(0,0,0,.7)}.dv-card{width:1440px;max-width:100%;border:1px solid rgba(0,0,0,.12);border-radius:8px;box-shadow:0 2px 10px rgba(0,0,0,.08);overflow:hidden}.dv-opt:target .dv-oid{background:#1d5c4f;color:#fff}.dv-next{margin:24px 0 0;font:13px/1.5 "IBM Plex Sans",system-ui,sans-serif;color:rgba(0,0,0,.55)}</style></helmet>
+
+<section class="dv-turn" id="t0">
+  <div style="display:flex;gap:48px;flex-wrap:wrap;max-width:1500px">
+    <div style="display:flex;flex-direction:column;gap:10px;flex:1 1 520px">
+      <span style="font:500 12px 'IBM Plex Mono',monospace;color:rgba(0,0,0,.5)">VERDANT-X · first pass · 9 Oct 2026</span>
+      <h1 style="margin:0;font:500 36px/1.15 'IBM Plex Sans',sans-serif;color:#1a1d1c">Design system, shell, plant operator, importer and fraud screens</h1>
+      <p style="margin:0;font:400 15px/1.6 'IBM Plex Sans',sans-serif;color:rgba(0,0,0,.65);max-width:640px">Every screen at 1440 px, dark (left) and light (right). Numbers, check reasons and thresholds come from the backend repo. Money screen has three variants; everything else is one direction.</p>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:6px;flex:1 1 420px;font:400 13px/1.55 'IBM Plex Sans',sans-serif;color:rgba(0,0,0,.65)">
+      <span style="font-weight:600;color:#1a1d1c">Assumptions</span>
+      <span>· Turkish carbon price for the 10,000 t shipment is €5,100, derived from your €108,253 verified figure.</span>
+      <span>· Certificate price held at €75 for all years; only the free-allocation factor changes.</span>
+      <span>· Importers, verifier and block numbers are synthetic placeholders. Hashes are 64-hex placeholders.</span>
+      <span>· Status is never color-only: each state has its own glyph, fill style and label.</span>
+    </div>
+  </div>
+</section>
+
+<section class="dv-turn" id="t1">
+  <div class="dv-thd"><a class="dv-tid" href="#t1">1</a><span class="dv-tname">Money screen · 3 variants</span><span class="dv-tsub">Year selector is live in each. Pick one for the video.</span></div>
+  <div class="dv-opts">
+    <div class="dv-opt" id="1a"><div class="dv-olabel"><a class="dv-oid" href="#1a">1a</a>Ledger: side-by-side paths, saving below</div><div class="dv-card" data-theme="dark"><dc-import name="Screen Money" variant="a" hint-size="1440px,900px"></dc-import></div></div>
+    <div class="dv-opt" id="1b"><div class="dv-olabel"><a class="dv-oid" href="#1b">1b</a>Hero: one number, two bars</div><div class="dv-card" data-theme="dark"><dc-import name="Screen Money" variant="b" hint-size="1440px,900px"></dc-import></div></div>
+    <div class="dv-opt" id="1c"><div class="dv-olabel"><a class="dv-oid" href="#1c">1c</a>Over time: saving + cost by year chart</div><div class="dv-card" data-theme="dark"><dc-import name="Screen Money" variant="c" hint-size="1440px,900px"></dc-import></div></div>
+    <div class="dv-opt"><div class="dv-olabel"><a class="dv-oid" href="#1a">1a</a>light</div><div class="dv-card" data-theme="light"><dc-import name="Screen Money" variant="a" hint-size="1440px,900px"></dc-import></div></div>
+    <div class="dv-opt"><div class="dv-olabel"><a class="dv-oid" href="#1b">1b</a>light</div><div class="dv-card" data-theme="light"><dc-import name="Screen Money" variant="b" hint-size="1440px,900px"></dc-import></div></div>
+    <div class="dv-opt"><div class="dv-olabel"><a class="dv-oid" href="#1c">1c</a>light</div><div class="dv-card" data-theme="light"><dc-import name="Screen Money" variant="c" hint-size="1440px,900px"></dc-import></div></div>
+  </div>
+  <p class="dv-next">Try next: "go with <a class="dv-oid" href="#1b">1b</a> but add the year chart from <a class="dv-oid" href="#1c">1c</a>" · "make the saving in <a class="dv-oid" href="#1a">1a</a> neutral instead of teal"</p>
+</section>
+
+<section class="dv-turn" id="ds">
+  <div class="dv-thd"><span class="dv-tname">Design system</span><span class="dv-tsub">tokens.css + tailwind.config.js in the project root</span></div>
+  <div class="dv-opts">
+    <div class="dv-opt"><div class="dv-olabel">Dark</div><div class="dv-card" data-theme="dark"><dc-import name="Design System" hint-size="1440px,2200px"></dc-import></div></div>
+    <div class="dv-opt"><div class="dv-olabel">Light</div><div class="dv-card" data-theme="light"><dc-import name="Design System" hint-size="1440px,2200px"></dc-import></div></div>
+  </div>
+</section>
+
+<section class="dv-turn" id="plant">
+  <div class="dv-thd"><span class="dv-tname">Plant operator</span><span class="dv-tsub">App shell is the top bar on every screen</span></div>
+  <div style="display:flex;flex-direction:column;gap:48px">
+    <div class="dv-opts">
+      <div class="dv-opt"><div class="dv-olabel">Submit month</div><div class="dv-card" data-theme="dark"><dc-import name="Screen Submit" hint-size="1440px,1100px"></dc-import></div></div>
+      <div class="dv-opt"><div class="dv-olabel">Submit month · light</div><div class="dv-card" data-theme="light"><dc-import name="Screen Submit" hint-size="1440px,1100px"></dc-import></div></div>
+    </div>
+    <div class="dv-opts">
+      <div class="dv-opt"><div class="dv-olabel">Report · all green</div><div class="dv-card" data-theme="dark"><dc-import name="Screen Report" state="pass" hint-size="1440px,1000px"></dc-import></div></div>
+      <div class="dv-opt"><div class="dv-olabel">Report · all green · light</div><div class="dv-card" data-theme="light"><dc-import name="Screen Report" state="pass" hint-size="1440px,1000px"></dc-import></div></div>
+    </div>
+    <div class="dv-opts">
+      <div class="dv-opt"><div class="dv-olabel">Report · flagged, can sign</div><div class="dv-card" data-theme="dark"><dc-import name="Screen Report" state="flagged" hint-size="1440px,1000px"></dc-import></div></div>
+      <div class="dv-opt"><div class="dv-olabel">Report · flagged · light</div><div class="dv-card" data-theme="light"><dc-import name="Screen Report" state="flagged" hint-size="1440px,1000px"></dc-import></div></div>
+    </div>
+    <div class="dv-opts">
+      <div class="dv-opt"><div class="dv-olabel">Report · blocked, cannot sign</div><div class="dv-card" data-theme="dark"><dc-import name="Screen Report" state="blocked" hint-size="1440px,1050px"></dc-import></div></div>
+      <div class="dv-opt"><div class="dv-olabel">Report · blocked · light</div><div class="dv-card" data-theme="light"><dc-import name="Screen Report" state="blocked" hint-size="1440px,1050px"></dc-import></div></div>
+    </div>
+    <div class="dv-opts">
+      <div class="dv-opt"><div class="dv-olabel">Sign &amp; anchor · step 1 signature</div><div class="dv-card" data-theme="dark"><dc-import name="Screen Sign" step="1" hint-size="1440px,900px"></dc-import></div></div>
+      <div class="dv-opt"><div class="dv-olabel">Step 2 · fingerprint</div><div class="dv-card" data-theme="dark"><dc-import name="Screen Sign" step="2" hint-size="1440px,900px"></dc-import></div></div>
+      <div class="dv-opt"><div class="dv-olabel">Step 3 · anchored</div><div class="dv-card" data-theme="dark"><dc-import name="Screen Sign" step="3" hint-size="1440px,1000px"></dc-import></div></div>
+      <div class="dv-opt"><div class="dv-olabel">Step 3 · light</div><div class="dv-card" data-theme="light"><dc-import name="Screen Sign" step="3" hint-size="1440px,1000px"></dc-import></div></div>
+    </div>
+    <div class="dv-opts">
+      <div class="dv-opt"><div class="dv-olabel">Allocate tonnes</div><div class="dv-card" data-theme="dark"><dc-import name="Screen Allocate" hint-size="1440px,900px"></dc-import></div></div>
+      <div class="dv-opt"><div class="dv-olabel">Allocate · over-allocation rejected</div><div class="dv-card" data-theme="dark"><dc-import name="Screen Allocate" rejected="{{ true }}" hint-size="1440px,900px"></dc-import></div></div>
+      <div class="dv-opt"><div class="dv-olabel">Allocate · light</div><div class="dv-card" data-theme="light"><dc-import name="Screen Allocate" hint-size="1440px,900px"></dc-import></div></div>
+      <div class="dv-opt"><div class="dv-olabel">Rejected · light</div><div class="dv-card" data-theme="light"><dc-import name="Screen Allocate" rejected="{{ true }}" hint-size="1440px,900px"></dc-import></div></div>
+    </div>
+    <div class="dv-opts">
+      <div class="dv-opt"><div class="dv-olabel">History · Marmara, 4 blocked months</div><div class="dv-card" data-theme="dark"><dc-import name="Screen History" hint-size="1440px,960px"></dc-import></div></div>
+      <div class="dv-opt"><div class="dv-olabel">History · light</div><div class="dv-card" data-theme="light"><dc-import name="Screen History" hint-size="1440px,960px"></dc-import></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="dv-turn" id="importer">
+  <div class="dv-thd"><span class="dv-tname">EU importer</span><span class="dv-tsub">Opens from a link, no login</span></div>
+  <div class="dv-opts">
+    <div class="dv-opt"><div class="dv-olabel">Disclosure package</div><div class="dv-card" data-theme="dark"><dc-import name="Screen Disclosure" hint-size="1440px,1000px"></dc-import></div></div>
+    <div class="dv-opt"><div class="dv-olabel">Disclosure package · light</div><div class="dv-card" data-theme="light"><dc-import name="Screen Disclosure" hint-size="1440px,1000px"></dc-import></div></div>
+  </div>
+</section>
+
+<section class="dv-turn" id="fraud">
+  <div class="dv-thd"><span class="dv-tname">Fraud moments</span><span class="dv-tsub">Full-screen states for the video</span></div>
+  <div class="dv-opts">
+    <div class="dv-opt"><div class="dv-olabel">(a) Calcination below chemistry</div><div class="dv-card" data-theme="dark"><dc-import name="Screen Fraud" kind="calcination" hint-size="1440px,900px"></dc-import></div></div>
+    <div class="dv-opt"><div class="dv-olabel">(b) Same tonne sold twice</div><div class="dv-card" data-theme="dark"><dc-import name="Screen Fraud" kind="double" hint-size="1440px,900px"></dc-import></div></div>
+    <div class="dv-opt"><div class="dv-olabel">(a) light</div><div class="dv-card" data-theme="light"><dc-import name="Screen Fraud" kind="calcination" hint-size="1440px,900px"></dc-import></div></div>
+    <div class="dv-opt"><div class="dv-olabel">(b) light</div><div class="dv-card" data-theme="light"><dc-import name="Screen Fraud" kind="double" hint-size="1440px,900px"></dc-import></div></div>
+  </div>
+</section>
+</x-dc>
+</body>
+</html>

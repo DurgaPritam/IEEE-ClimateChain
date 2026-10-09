@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet><link rel="stylesheet" href="tokens.css"></helmet>
+<div style="min-height:900px;background:var(--vx-bg);color:var(--vx-text);font-family:var(--vx-font-sans)">
+  <dc-import name="TopBar" role="plant" tab="allocate" hint-size="100%,104px"></dc-import>
+  <main style="max-width:1360px;margin:0 auto;padding:28px 40px 40px;display:flex;flex-direction:column;gap:20px;box-sizing:border-box">
+    <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap">
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <span style="font:500 11px/1 var(--vx-font-sans);letter-spacing:0.09em;text-transform:uppercase;color:var(--vx-text-3)">December 2026 · TR-ANA-01 · CEM I · 0.839 t CO₂/t</span>
+        <h1 style="margin:0;font:500 30px/1.15 var(--vx-font-sans);letter-spacing:-0.01em">Allocate tonnes</h1>
+      </div>
+      <dc-import name="Pill" status="verified" hint-size="160px,24px"></dc-import>
+    </div>
+
+    <section style="background:var(--vx-surface);border:1px solid var(--vx-line);border-radius:12px;padding:24px;display:flex;flex-direction:column;gap:16px">
+      <div style="display:flex;gap:40px;flex-wrap:wrap">
+        <div style="display:flex;flex-direction:column;gap:6px"><span style="font-size:12px;color:var(--vx-text-3)">Verified total</span><span style="font:300 44px/1 var(--vx-font-sans);letter-spacing:-0.02em;font-variant-numeric:tabular-nums">91,509.2 <span style="font-size:18px;color:var(--vx-text-3)">t</span></span></div>
+        <div style="display:flex;flex-direction:column;gap:6px"><span style="font-size:12px;color:var(--vx-text-3)">Allocated</span><span style="font:300 44px/1 var(--vx-font-sans);letter-spacing:-0.02em;font-variant-numeric:tabular-nums">{{ allocated }} <span style="font-size:18px;color:var(--vx-text-3)">t</span></span></div>
+        <div style="display:flex;flex-direction:column;gap:6px"><span style="font-size:12px;color:var(--vx-text-3)">Remaining</span><span style="font:300 44px/1 var(--vx-font-sans);letter-spacing:-0.02em;font-variant-numeric:tabular-nums;color:{{ remColor }}">{{ remaining }} <span style="font-size:18px;color:var(--vx-text-3)">t</span></span></div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div style="position:relative;height:14px;border-radius:3px;background:repeating-linear-gradient(135deg,var(--vx-surface-2) 0 6px,var(--vx-bg) 6px 12px);border:1px solid var(--vx-line);overflow:hidden">
+          <div style="position:absolute;left:0;top:0;bottom:0;width:{{ pct }};background:var(--vx-verified)"></div>
+        </div>
+        <div style="display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;font-size:12px;color:var(--vx-text-3)"><span style="white-space:nowrap">■ allocated {{ pctLabel }}</span><span style="white-space:nowrap">▨ remaining · enforced by VerdantRegistry.allocate</span></div>
+      </div>
+    </section>
+
+    <div style="display:flex;gap:20px;flex-wrap:wrap;align-items:flex-start">
+      <section style="flex:1.6 1 600px;min-width:0;background:var(--vx-surface);border:1px solid var(--vx-line);border-radius:12px;overflow:hidden">
+        <div style="padding:20px 22px 14px;font:600 16px/1.3 var(--vx-font-sans)">Shipments</div>
+        <div style="display:grid;grid-template-columns:130px minmax(0,1fr) 110px 250px;gap:16px;padding:8px 22px;border-top:1px solid var(--vx-line-soft);border-bottom:1px solid var(--vx-line-soft);font:500 11px/1.2 var(--vx-font-sans);letter-spacing:0.08em;text-transform:uppercase;color:var(--vx-text-3)"><span>Shipment</span><span>Importer</span><span style="text-align:right">Tonnes</span><span>Transaction</span></div>
+        <sc-for list="{{ shipments }}" as="s" hint-placeholder-count="4">
+          <div style="display:grid;grid-template-columns:130px minmax(0,1fr) 110px 250px;gap:16px;align-items:center;padding:12px 22px;border-bottom:1px solid var(--vx-line-soft)">
+            <span style="font:400 13px var(--vx-font-mono)">{{ s.id }}</span>
+            <span style="font-size:14px;min-width:0">{{ s.importer }} <span style="color:var(--vx-text-3)">· {{ s.port }}</span></span>
+            <span style="font-size:14px;text-align:right;font-variant-numeric:tabular-nums">{{ s.t }}</span>
+            <div><dc-import name="Hash" value="{{ s.tx }}" explorer="{{ true }}" hint-size="190px,28px"></dc-import></div>
+          </div>
+        </sc-for>
+      </section>
+
+      <section style="flex:1 1 380px;min-width:0;background:var(--vx-surface);border:1px solid var(--vx-line);border-radius:12px;padding:22px;display:flex;flex-direction:column;gap:14px">
+        <span style="font:600 16px/1.3 var(--vx-font-sans)">Allocate to shipment</span>
+        <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:13px;color:var(--vx-text-2)">Shipment ID</span><span style="display:flex;align-items:center;height:40px;padding:0 12px;border:1px solid var(--vx-line);border-radius:7px;background:var(--vx-bg);font:400 14px var(--vx-font-mono)">{{ formId }}</span></label>
+        <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:13px;color:var(--vx-text-2)">Importer</span><span style="display:flex;align-items:center;justify-content:space-between;height:40px;padding:0 12px;border:1px solid var(--vx-line);border-radius:7px;background:var(--vx-bg);font-size:14px">{{ formImporter }}<span style="color:var(--vx-text-3);font-size:10px">▾</span></span></label>
+        <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:13px;color:var(--vx-text-2)">Tonnes of cement</span><span style="display:flex;align-items:center;height:40px;border:1px solid {{ inputBorder }};border-radius:7px;background:var(--vx-bg)"><span style="flex:1;padding:0 12px;font-size:15px;font-variant-numeric:tabular-nums">10,000</span><span style="padding:0 12px;height:100%;display:flex;align-items:center;border-left:1px solid var(--vx-line-soft);font:400 12px var(--vx-font-mono);color:var(--vx-text-3)">t</span></span></label>
+        <sc-if value="{{ rejected }}">
+          <div style="display:flex;gap:12px;padding:14px;border:1.5px solid var(--vx-block);border-radius:8px;background:var(--vx-block-bg)">
+            <span style="width:22px;height:22px;border-radius:3px;background:var(--vx-block);color:var(--vx-on-status);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex:none">✕</span>
+            <div style="display:flex;flex-direction:column;gap:6px">
+              <span style="font:600 14px/1.4 var(--vx-font-sans)">Over-allocation rejected by contract: 0 t available, 10,000 t requested.</span>
+              <span style="font:400 12px/1.4 var(--vx-font-mono);color:var(--vx-text-2)">revert OverAllocation(available=0, requested=10000000 kg)</span>
+            </div>
+          </div>
+        </sc-if>
+        <button style="height:44px;border:0;border-radius:8px;background:var(--vx-accent);color:var(--vx-accent-ink);font:600 14px var(--vx-font-sans);cursor:pointer">Allocate 10,000 t</button>
+        <span style="font-size:12px;color:var(--vx-text-3);line-height:1.5">The contract checks remaining tonnes before writing. The same verified tonne cannot be allocated twice.</span>
+      </section>
+    </div>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1440,&quot;height&quot;:900},&quot;rejected&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;}}">
+class Component extends DCLogic {
+  renderVals() {
+    const rej = !!this.props.rejected;
+    const base = [
+      ['SHP-2026-1201', 'Nordhafen Baustoffe GmbH', 'Hamburg', 10000, 'e05c9b3a71d4f826a9e0c3574b18d6f20c7a93e5d2f61b488e3c05a917f4b2d6'],
+      ['SHP-2026-1203', 'Delta Bouw B.V.', 'Rotterdam', 25000, '7b3e91d04c68a2f5e19d07b358c2a6e40f71d9b8c3a54e269d0b17f4a68e2c51'],
+      ['SHP-2026-1205', 'Ligure Costruzioni S.p.A.', 'Genoa', 18000, '46d0b8e29f17c5a30e84d6b1c52a9f703b6e18d4a7f29c05e1d4b6a82c90f37b'],
+    ];
+    if (rej) base.push(['SHP-2026-1207', 'Nordhafen Baustoffe GmbH', 'Hamburg', 38509.2, 'b8f42d6a13c09e75d6a1f83b2e5c07d994b6a1e37f0d58c2a3e9b14f60c7d25a']);
+    const alloc = base.reduce((a, s) => a + s[3], 0);
+    const fmt = n => n.toLocaleString('en-US', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+    const total = 91509.2;
+    return {
+      rejected: rej,
+      shipments: base.map(([id, importer, port, t, tx]) => ({ id, importer: importer + ' (synthetic)', port, t: fmt(t), tx })),
+      allocated: fmt(alloc), remaining: fmt(Math.max(0, total - alloc)),
+      remColor: rej ? 'var(--vx-block)' : 'var(--vx-text)',
+      pct: (alloc / total * 100).toFixed(2) + '%', pctLabel: Math.round(alloc / total * 100) + '%',
+      formId: rej ? 'SHP-2026-1209' : 'SHP-2026-1207',
+      formImporter: rej ? 'Delta Bouw B.V. (synthetic)' : 'Nordhafen Baustoffe GmbH (synthetic)',
+      inputBorder: rej ? 'var(--vx-block)' : 'var(--vx-line)',
+    };
+  }
+}
+</script>
+</body>
+</html>

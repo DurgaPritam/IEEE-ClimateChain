@@ -32,5 +32,4 @@ class Guard:
     ) -> GuardResult:
         ctx = GuardContext(cfg=self.cfg, history=history or [], sector=self.sector)
         checks = [*self.rules, *([self.anomaly] if self.anomaly else [])]
-        flags = [f for c in checks if (f := c.check(x, result, ctx))]
-        return GuardResult(flags=flags)
+        return GuardResult(checks=[c.check(x, result, ctx) for c in checks])

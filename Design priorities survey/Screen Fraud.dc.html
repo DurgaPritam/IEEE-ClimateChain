@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet><link rel="stylesheet" href="tokens.css"></helmet>
+<div style="min-height:900px;background:var(--vx-bg);color:var(--vx-text);font-family:var(--vx-font-sans);display:flex;flex-direction:column;box-sizing:border-box;padding:40px 72px 48px;gap:40px;border-top:6px solid var(--vx-block)">
+  <div style="display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap">
+    <div style="display:flex;align-items:center;gap:14px">
+      <span style="position:relative;width:22px;height:22px;box-sizing:border-box;border:1.5px solid var(--vx-accent);border-radius:3px;display:inline-block"><span style="position:absolute;right:3px;bottom:3px;width:8px;height:8px;background:var(--vx-accent);border-radius:1px"></span></span>
+      <span style="font:600 15px/1 var(--vx-font-sans);letter-spacing:0.14em">VERDANT<span style="color:var(--vx-accent)">-X</span></span>
+      <span style="font:500 10px/1 var(--vx-font-mono);letter-spacing:0.08em;color:var(--vx-warn);border:1px solid var(--vx-warn);border-radius:3px;padding:4px 6px;text-transform:uppercase">Synthetic demo data</span>
+    </div>
+    <span style="font:400 13px var(--vx-font-mono);color:var(--vx-text-3)">{{ context }}</span>
+  </div>
+
+  <div style="flex:1;display:flex;flex-direction:column;justify-content:center;gap:28px;max-width:1180px">
+    <div style="display:flex;align-items:center;gap:14px">
+      <span style="width:44px;height:44px;border-radius:5px;background:var(--vx-block);color:var(--vx-on-status);display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700">✕</span>
+      <span style="font:600 15px/1.2 var(--vx-font-sans);letter-spacing:0.1em;text-transform:uppercase;color:var(--vx-block)">{{ kicker }}</span>
+    </div>
+    <h1 style="margin:0;font:400 clamp(44px,4.4vw,68px)/1.12 var(--vx-font-sans);letter-spacing:-0.02em;text-wrap:pretty">{{ headline }}</h1>
+
+    <sc-if value="{{ isA }}" hint-placeholder-val="{{ true }}">
+      <div style="display:flex;flex-direction:column;gap:14px;max-width:980px;padding-top:8px">
+        <div style="display:grid;grid-template-columns:220px minmax(0,1fr) 180px;gap:20px;align-items:center">
+          <span style="font-size:17px;color:var(--vx-text-2)">Chemical minimum</span>
+          <div style="height:22px;background:var(--vx-surface-2);border-radius:3px"><div style="height:100%;width:100%;background:var(--vx-text-3);border-radius:3px"></div></div>
+          <span style="font:400 26px var(--vx-font-sans);font-variant-numeric:tabular-nums;text-align:right">51,560 t</span>
+        </div>
+        <div style="display:grid;grid-template-columns:220px minmax(0,1fr) 180px;gap:20px;align-items:center">
+          <span style="font-size:17px;color:var(--vx-text-2)">Reported process CO₂</span>
+          <div style="position:relative;height:22px;background:var(--vx-surface-2);border-radius:3px"><div style="height:100%;width:81.6%;background:var(--vx-block);border-radius:3px"></div><span style="position:absolute;left:81.6%;top:-8px;bottom:-8px;border-left:1px dashed var(--vx-text-2)"></span></div>
+          <span style="font:400 26px var(--vx-font-sans);font-variant-numeric:tabular-nums;text-align:right;color:var(--vx-block)">42,090 t</span>
+        </div>
+        <span style="font-size:15px;color:var(--vx-text-3);padding-left:240px">98,560 t clinker × (0.785 · CaO + 1.092 · MgO), −2% tolerance · Marmara Cement (synthetic), December 2026</span>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isB }}">
+      <div style="display:flex;flex-direction:column;gap:16px;max-width:1060px;padding-top:8px">
+        <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1px;background:var(--vx-line);border:1px solid var(--vx-line);border-radius:10px;overflow:hidden">
+          <div style="background:var(--vx-surface);padding:20px 22px;display:flex;flex-direction:column;gap:6px"><span style="font-size:14px;color:var(--vx-text-3)">Verified for December</span><span style="font:300 40px/1 var(--vx-font-sans);font-variant-numeric:tabular-nums">91,509.2 t</span></div>
+          <div style="background:var(--vx-surface);padding:20px 22px;display:flex;flex-direction:column;gap:6px"><span style="font-size:14px;color:var(--vx-text-3)">Already allocated</span><span style="font:300 40px/1 var(--vx-font-sans);font-variant-numeric:tabular-nums">91,509.2 t</span></div>
+          <div style="background:var(--vx-surface);padding:20px 22px;display:flex;flex-direction:column;gap:6px"><span style="font-size:14px;color:var(--vx-text-3)">Requested again</span><span style="font:300 40px/1 var(--vx-font-sans);font-variant-numeric:tabular-nums;color:var(--vx-block)">10,000 t</span></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;font:400 15px var(--vx-font-mono);color:var(--vx-text-2)">
+          <span>revert OverAllocation(available=0, requested=10000000 kg)</span>
+          <dc-import name="Hash" value="0c41e8a73b95d2f60e1a7c48b3d9f05e26a8c1b74f0d93e5a2c6b18d7e04f39a" label="reverted tx" explorer="{{ true }}" hint-size="320px,28px"></dc-import>
+        </div>
+      </div>
+    </sc-if>
+  </div>
+
+  <div style="display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;padding-top:20px;border-top:1px solid var(--vx-line);font-size:17px;color:var(--vx-text-2)">
+    <span>{{ footer }}</span>
+    <span style="color:var(--vx-text-3)">{{ footerRight }}</span>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1440,&quot;height&quot;:900},&quot;kind&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;calcination&quot;,&quot;double&quot;],&quot;default&quot;:&quot;calcination&quot;,&quot;tsType&quot;:&quot;'calcination'|'double'&quot;}}">
+class Component extends DCLogic {
+  renderVals() {
+    const a = (this.props.kind ?? 'calcination') === 'calcination';
+    return a ? {
+      isA: true, isB: false,
+      context: 'TR-MAR-03 · 2026-12 · plausibility guard',
+      kicker: 'Report blocked · returned to plant',
+      headline: 'Reported process CO₂ is below the chemical minimum for 98,560 t of clinker.',
+      footer: 'Nothing was signed. Nothing was written on-chain.',
+      footerRight: 'Calcination CO₂ is fixed by chemistry',
+    } : {
+      isA: false, isB: true,
+      context: 'VerdantRegistry · allocate() · Polygon Amoy',
+      kicker: 'Rejected by contract',
+      headline: 'Over-allocation rejected by contract: 0 t available, 10,000 t requested.',
+      footer: 'The same verified tonne cannot be sold to two importers.',
+      footerRight: 'Enforced on-chain, across importers who never talk to each other',
+    };
+  }
+}
+</script>
+</body>
+</html>

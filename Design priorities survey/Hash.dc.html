@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet><link rel="stylesheet" href="tokens.css"></helmet>
+<span style="display:inline-flex;align-items:center;gap:0;height:28px;border:1px solid var(--vx-line);border-radius:6px;background:var(--vx-surface-2);font-family:var(--vx-font-mono);font-size:12.5px;color:var(--vx-text);white-space:nowrap;box-sizing:border-box;overflow:hidden" title="{{ full }}">
+  <sc-if value="{{ hasLabel }}"><span style="padding:0 8px;height:100%;display:inline-flex;align-items:center;border-right:1px solid var(--vx-line);color:var(--vx-text-3);font-family:var(--vx-font-sans);font-size:11px;letter-spacing:0.06em;text-transform:uppercase">{{ label }}</span></sc-if>
+  <span style="padding:0 9px;letter-spacing:0.02em">{{ short }}</span>
+  <button onClick="{{ copy }}" style="height:100%;padding:0 9px;border:0;border-left:1px solid var(--vx-line);background:transparent;color:var(--vx-text-2);font:500 11px var(--vx-font-sans);cursor:pointer;display:inline-flex;align-items:center;gap:5px" style-hover="background:var(--vx-surface);color:var(--vx-text)">
+    <sc-if value="{{ notCopied }}" hint-placeholder-val="{{ true }}"><span style="display:inline-flex;align-items:center;gap:5px"><span style="width:8px;height:9px;border:1.3px solid currentColor;border-radius:1.5px;box-shadow:2px -2px 0 -0.5px var(--vx-surface-2),2px -2px 0 0.8px currentColor"></span>Copy</span></sc-if>
+    <sc-if value="{{ copied }}"><span style="color:var(--vx-pass)">✓ Copied</span></sc-if>
+  </button>
+  <sc-if value="{{ explorer }}"><a href="{{ href }}" target="_blank" rel="noopener" style="height:100%;padding:0 9px;border-left:1px solid var(--vx-line);display:inline-flex;align-items:center;gap:4px;color:var(--vx-accent);font:500 11px var(--vx-font-sans);text-decoration:none">Explorer ↗</a></sc-if>
+</span>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:420,&quot;height&quot;:40},&quot;value&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;3f9a6c1e8b2d47a0915fce3d26b8e4a17c0d59f2a38be61d4c7f09a2e5b3c21e&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;label&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;explorer&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;},&quot;kind&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;tx&quot;,&quot;address&quot;],&quot;default&quot;:&quot;tx&quot;,&quot;tsType&quot;:&quot;'tx'|'address'&quot;}}">
+class Component extends DCLogic {
+  state = { copied: false };
+  renderVals() {
+    const raw = this.props.value ?? '3f9a6c1e8b2d47a0915fce3d26b8e4a17c0d59f2a38be61d4c7f09a2e5b3c21e';
+    const full = raw.startsWith('0x') ? raw : '0x' + raw;
+    return {
+      full, short: full.slice(0, 6) + '…' + full.slice(-4),
+      label: this.props.label ?? '', hasLabel: !!this.props.label,
+      explorer: !!this.props.explorer,
+      href: 'https://amoy.polygonscan.com/' + (this.props.kind ?? 'tx') + '/' + full,
+      copied: this.state.copied, notCopied: !this.state.copied,
+      copy: () => {
+        try { navigator.clipboard.writeText(full); } catch (e) {}
+        this.setState({ copied: true });
+        clearTimeout(this._t); this._t = setTimeout(() => this.setState({ copied: false }), 1400);
+      },
+    };
+  }
+}
+</script>
+</body>
+</html>

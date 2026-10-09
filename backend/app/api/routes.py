@@ -8,7 +8,7 @@ from pydantic import BaseModel
 from app import demo
 from app.chain import get_chain
 from app.data.synthetic import FRAUD_TYPES
-from app.pricing.cbam_cost import compare
+from app.pricing.cbam_cost import compare, schedule
 from app.service import DisclosurePackage, VerdantService, signature_size_summary
 from app.store import Store
 
@@ -41,6 +41,18 @@ def health(s: VerdantService = Depends(svc)):
     return {"ok": True, "chain": s.chain.name}
 
 
+@router.get("/info")
+def info(s: VerdantService = Depends(svc)):
+    """Static facts the UI shows: chain, contract, verifier and live period."""
+    chain = {"backend": s.chain.name, "label": "In-memory chain (offline)", "address": None, "explorer": None}
+    if s.chain.name == "web3":
+        net = getattr(s.chain, "network", "")
+        chain |= {"label": {"amoy": "Polygon Amoy testnet", "sepolia": "Sepolia testnet"}.get(net, "Local chain"),
+                  "address": s.chain.address, "explorer": getattr(s.chain, "explorer", None)}
+    return {"chain": chain, "verifier": {"name": demo.VERIFIER_NAME, "key_fingerprint": s.verifier_key.key_fingerprint},
+            "live_period": demo.LIVE_PERIOD, "importers": demo.IMPORTERS}
+
+
 @router.get("/plants")
 def plants(s: VerdantService = Depends(svc)):
     return list(s.store.plants.values())
@@ -59,10 +71,17 @@ def report(report_id: str, s: VerdantService = Depends(svc)):
         out["signature_bytes"] = signature_size_summary(r.plant_signature)
     if r.report_hash and r.status.value == "verified":
         out["remaining_tonnes"] = s.remaining_tonnes(report_id)
+        out["allocations"] = s.report_allocations(report_id)
+    out["leaves"] = s.leaf_counts(r)
     return out
 
 
 # ---- plant operator ----
+
+@router.post("/plants/{plant_id}/preview", tags=["plant"])
+def preview(plant_id: str, body: SubmitBody, s: VerdantService = Depends(svc)):
+    return s.preview(plant_id, body.inputs)
+
 
 @router.post("/plants/{plant_id}/reports", tags=["plant"])
 def submit(plant_id: str, body: SubmitBody, s: VerdantService = Depends(svc)):
@@ -102,6 +121,11 @@ def disclosure(shipment_id: str, year: int = 2026, s: VerdantService = Depends(s
 @router.post("/disclosure/verify", tags=["importer"])
 def verify(package: DisclosurePackage):
     return VerdantService.verify_package(package)
+
+
+@router.get("/cost/schedule", tags=["importer"])
+def cost_schedule(tonnes: float, see: float, sector: str = "cement", carbon_paid_eur: float = 0):
+    return schedule(sector, tonnes, see, carbon_price_paid_eur=carbon_paid_eur)
 
 
 @router.get("/cost", tags=["importer"])

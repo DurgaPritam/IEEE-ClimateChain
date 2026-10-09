@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet><link rel="stylesheet" href="tokens.css"></helmet>
+<div style="min-height:900px;background:var(--vx-bg);color:var(--vx-text);font-family:var(--vx-font-sans)">
+  <dc-import name="TopBar" role="plant" tab="sign" hint-size="100%,104px"></dc-import>
+  <main style="max-width:1360px;margin:0 auto;padding:28px 40px 40px;display:flex;gap:28px;flex-wrap:wrap;align-items:flex-start;box-sizing:border-box">
+    <aside style="flex:0 1 320px;min-width:260px;display:flex;flex-direction:column;gap:22px">
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <span style="font:500 11px/1 var(--vx-font-sans);letter-spacing:0.09em;text-transform:uppercase;color:var(--vx-text-3)">December 2026 · TR-ANA-01 · 0.839 t CO₂/t</span>
+        <h1 style="margin:0;font:500 30px/1.15 var(--vx-font-sans);letter-spacing:-0.01em">Sign and anchor</h1>
+      </div>
+      <ol style="list-style:none;margin:0;padding:0;display:flex;flex-direction:column">
+        <sc-for list="{{ steps }}" as="s" hint-placeholder-count="4">
+          <li style="display:grid;grid-template-columns:28px 1fr;gap:14px;min-height:72px">
+            <div style="display:flex;flex-direction:column;align-items:center">
+              <sc-if value="{{ s.done }}"><span style="width:26px;height:26px;border-radius:50%;background:var(--vx-accent);color:var(--vx-accent-ink);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex:none">✓</span></sc-if>
+              <sc-if value="{{ s.active }}"><span style="width:26px;height:26px;box-sizing:border-box;border-radius:50%;border:2px solid var(--vx-accent);color:var(--vx-accent);display:flex;align-items:center;justify-content:center;font:600 12px var(--vx-font-mono);flex:none">{{ s.n }}</span></sc-if>
+              <sc-if value="{{ s.todo }}"><span style="width:26px;height:26px;box-sizing:border-box;border-radius:50%;border:1px solid var(--vx-line);color:var(--vx-text-3);display:flex;align-items:center;justify-content:center;font:500 12px var(--vx-font-mono);flex:none">{{ s.n }}</span></sc-if>
+              <sc-if value="{{ s.notLast }}"><span style="flex:1;width:1px;background:var(--vx-line);margin:4px 0"></span></sc-if>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:4px;padding:3px 0 18px">
+              <span style="font:500 15px/1.3 var(--vx-font-sans);color:{{ s.color }}">{{ s.title }}</span>
+              <span style="font-size:13px;line-height:1.45;color:var(--vx-text-3)">{{ s.sub }}</span>
+            </div>
+          </li>
+        </sc-for>
+      </ol>
+      <div style="display:flex;gap:8px">
+        <button onClick="{{ prev }}" style="height:36px;padding:0 14px;border:1px solid var(--vx-line);border-radius:7px;background:transparent;color:var(--vx-text-2);font:500 13px var(--vx-font-sans);cursor:pointer">← Back</button>
+        <button onClick="{{ next }}" style="height:36px;padding:0 14px;border:0;border-radius:7px;background:var(--vx-accent);color:var(--vx-accent-ink);font:600 13px var(--vx-font-sans);cursor:pointer">{{ nextLabel }}</button>
+      </div>
+    </aside>
+
+    <div style="flex:1 1 640px;min-width:0;display:flex;flex-direction:column;gap:16px">
+      <section style="background:var(--vx-surface);border:1px solid var(--vx-line);border-radius:12px;padding:22px 24px;display:flex;flex-direction:column;gap:16px">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
+          <span style="font:600 16px/1.3 var(--vx-font-sans)">1 · Hybrid signature</span>
+          <dc-import name="Pill" status="signed" label="Signed · both components" hint-size="180px,24px"></dc-import>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px">
+          <div style="border:1px solid var(--vx-line-soft);border-radius:8px;padding:16px;background:var(--vx-bg);display:flex;flex-direction:column;gap:10px">
+            <div style="display:flex;justify-content:space-between;align-items:baseline"><span style="font:600 15px var(--vx-font-sans)">ML-DSA-65</span><span style="font-size:12px;color:var(--vx-text-3)">NIST FIPS 204 · post-quantum</span></div>
+            <div style="display:flex;gap:24px"><div style="display:flex;flex-direction:column;gap:2px"><span style="font:400 26px/1 var(--vx-font-sans);font-variant-numeric:tabular-nums">3,309 B</span><span style="font-size:12px;color:var(--vx-text-3)">signature</span></div><div style="display:flex;flex-direction:column;gap:2px"><span style="font:400 26px/1 var(--vx-font-sans);font-variant-numeric:tabular-nums">1,952 B</span><span style="font-size:12px;color:var(--vx-text-3)">public key</span></div></div>
+            <dc-import name="Hash" label="key fp" value="5b0e9a3c7f14d6e208c5b7a193e2f40d6a1c8e57b2d03f96e47a1c058d9b62f3" hint-size="240px,28px"></dc-import>
+          </div>
+          <div style="border:1px solid var(--vx-line-soft);border-radius:8px;padding:16px;background:var(--vx-bg);display:flex;flex-direction:column;gap:10px">
+            <div style="display:flex;justify-content:space-between;align-items:baseline"><span style="font:600 15px var(--vx-font-sans)">ECDSA P-256</span><span style="font-size:12px;color:var(--vx-text-3)">SHA-256 · classical</span></div>
+            <div style="display:flex;gap:24px"><div style="display:flex;flex-direction:column;gap:2px"><span style="font:400 26px/1 var(--vx-font-sans);font-variant-numeric:tabular-nums">71 B</span><span style="font-size:12px;color:var(--vx-text-3)">signature (DER)</span></div><div style="display:flex;flex-direction:column;gap:2px"><span style="font:400 26px/1 var(--vx-font-sans);font-variant-numeric:tabular-nums">65 B</span><span style="font-size:12px;color:var(--vx-text-3)">public key</span></div></div>
+            <dc-import name="Hash" label="key fp" value="c48d2e710a9f5b36e1c7d8042b6fa9537d0e18c4f3a26b905c8e17d2a04b93e6" hint-size="240px,28px"></dc-import>
+          </div>
+        </div>
+        <span style="font-size:13px;color:var(--vx-text-2);line-height:1.5">Valid only if both components verify. Domain-separated as <span style="font-family:var(--vx-font-mono);font-size:12px">VERDANT-X/report-signature/v1</span>. Signed payload: canonical JSON (RFC 8785) report header.</span>
+      </section>
+
+      <sc-if value="{{ show2 }}" hint-placeholder-val="{{ true }}">
+        <section style="background:var(--vx-surface);border:1px solid var(--vx-line);border-radius:12px;padding:22px 24px;display:flex;flex-direction:column;gap:16px">
+          <span style="font:600 16px/1.3 var(--vx-font-sans)">2 · Report fingerprint</span>
+          <div style="display:grid;grid-template-columns:140px minmax(0,1fr);gap:12px 16px;align-items:center">
+            <span style="font-size:13px;color:var(--vx-text-2)">Report hash</span><div><dc-import name="Hash" value="3f9a6c1e8b2d47a0915fce3d26b8e4a17c0d59f2a38be61d4c7f09a2e5b3c21e" hint-size="200px,28px"></dc-import></div>
+            <span style="font-size:13px;color:var(--vx-text-2)">Merkle root</span><div><dc-import name="Hash" value="a71c04e95d3b28f6c90e17ab4f62d8c30b95e7a41d6c3f80e2a947b56c18d03f" hint-size="200px,28px"></dc-import></div>
+            <span style="font-size:13px;color:var(--vx-text-2)">Leaves</span><span style="font-size:14px">31 salted fields · <span style="color:var(--vx-text-3)">8 disclosable, 23 private</span></span>
+          </div>
+        </section>
+      </sc-if>
+
+      <sc-if value="{{ show3 }}" hint-placeholder-val="{{ true }}">
+        <section style="background:var(--vx-surface);border:1px solid var(--vx-line);border-radius:12px;padding:22px 24px;display:flex;flex-direction:column;gap:16px">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
+            <span style="font:600 16px/1.3 var(--vx-font-sans)">3 · On-chain anchor</span>
+            <dc-import name="Pill" status="anchored" hint-size="160px,24px"></dc-import>
+          </div>
+          <div style="display:grid;grid-template-columns:140px minmax(0,1fr);gap:12px 16px;align-items:center">
+            <span style="font-size:13px;color:var(--vx-text-2)">Call</span><span style="font:400 13px var(--vx-font-mono)">anchorReport(TR-ANA-01, 2026-12, 0x3f9a…c21e, 0xa71c…d03f)</span>
+            <span style="font-size:13px;color:var(--vx-text-2)">Transaction</span><div><dc-import name="Hash" value="9e4b1c07d2f86a35b0c7e9143a5d68f2c1e09b746f2a85d307b4e1c958a3d26e" explorer="{{ true }}" hint-size="290px,28px"></dc-import></div>
+            <span style="font-size:13px;color:var(--vx-text-2)">Block</span><span style="font:400 13px var(--vx-font-mono)">#14,882,316 · Polygon Amoy</span>
+            <span style="font-size:13px;color:var(--vx-text-2)">Next</span><span style="font-size:14px">Awaiting verifier co-signature</span>
+          </div>
+        </section>
+      </sc-if>
+
+      <div style="display:flex;align-items:center;gap:16px;padding:18px 22px;border:1px solid var(--vx-line);border-radius:10px;background:var(--vx-bg);flex-wrap:wrap">
+        <span style="display:flex;gap:4px;flex:none"><span style="width:10px;height:10px;background:var(--vx-accent);border-radius:2px"></span><span style="width:10px;height:10px;border:1px solid var(--vx-line);border-radius:2px;box-sizing:border-box"></span><span style="width:10px;height:10px;border:1px solid var(--vx-line);border-radius:2px;box-sizing:border-box"></span><span style="width:10px;height:10px;border:1px solid var(--vx-line);border-radius:2px;box-sizing:border-box"></span></span>
+        <span style="font:400 18px/1.4 var(--vx-font-sans)">Only a fingerprint goes on-chain.</span>
+        <span style="font-size:13px;color:var(--vx-text-3)">32-byte hashes and the period. Plant data stays on the plant's server.</span>
+      </div>
+    </div>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1440,&quot;height&quot;:1000},&quot;step&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;min&quot;:1,&quot;max&quot;:3,&quot;default&quot;:3,&quot;tsType&quot;:&quot;1|2|3&quot;}}">
+class Component extends DCLogic {
+  state = { step: null };
+  renderVals() {
+    const step = Number(this.state.step ?? this.props.step ?? 3);
+    const defs = [
+      ['Calculated and checked', '0.839 t CO₂/t · 8 of 8 checks pass'],
+      ['Hybrid signature', 'ML-DSA-65 + ECDSA P-256 over the report header'],
+      ['Fingerprint anchored', 'Report hash and Merkle root written to the registry'],
+      ['Sent to verifier', 'Bosphorus Verification (synthetic) reviews and co-signs'],
+    ];
+    // step 1 = signature shown; 2 = fingerprint; 3 = anchored
+    const steps = defs.map(([title, sub], i) => {
+      const done = i === 0 || i < step; const active = !done && i === step; const todo = !done && !active;
+      return { n: i + 1, title, sub, done, active, todo, notLast: i < defs.length - 1, color: todo ? 'var(--vx-text-3)' : 'var(--vx-text)' };
+    });
+    return {
+      steps, show2: step >= 2, show3: step >= 3,
+      prev: () => this.setState({ step: Math.max(1, step - 1) }),
+      next: () => this.setState({ step: step >= 3 ? 1 : step + 1 }),
+      nextLabel: step >= 3 ? 'Replay' : 'Next step →',
+    };
+  }
+}
+</script>
+</body>
+</html>

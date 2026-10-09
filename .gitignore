@@ -21,3 +21,4 @@ contracts/deployments/hardhat.json
 
 # Planning docs
 *.docx
+*.tsbuildinfo

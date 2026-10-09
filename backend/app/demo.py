@@ -9,6 +9,14 @@ from app.store import Plant
 LIVE_MONTH = 23  # 2026-12
 LIVE_PERIOD = "2026-12"
 
+# Synthetic counterparties for the demo (clearly labelled in the UI).
+VERIFIER_NAME = "Bosphorus Verification (synthetic)"
+IMPORTERS = [
+    {"id": "DE-HAM-NORDHAFEN", "name": "Nordhafen Baustoffe GmbH", "port": "Hamburg"},
+    {"id": "NL-RTM-DELTABOUW", "name": "Delta Bouw B.V.", "port": "Rotterdam"},
+    {"id": "IT-GOA-LIGURE", "name": "Ligure Costruzioni S.p.A.", "port": "Genoa"},
+]
+
 
 def seed(service: VerdantService) -> VerdantService:
     data = generate()

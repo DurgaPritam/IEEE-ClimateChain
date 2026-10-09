@@ -73,3 +73,9 @@ def compare(
             "Carbon price paid at origin deducted only from the verified path, capped at gross cost (simplified)",
         ],
     )
+
+
+def schedule(sector: str, tonnes: float, verified_see: float, carbon_price_paid_eur: float = 0.0) -> list[CostComparison]:
+    """Cost comparison for every year in the free-allocation phase-out (for year selectors and charts)."""
+    years = sorted(config.load("pricing")["free_allocation_factor_by_year"])
+    return [compare(sector, tonnes, verified_see, year=y, carbon_price_paid_eur=carbon_price_paid_eur) for y in years]

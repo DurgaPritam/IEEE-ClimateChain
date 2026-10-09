@@ -2,7 +2,7 @@
 
 from enum import Enum
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, computed_field
 
 
 class EmissionsResult(BaseModel):
@@ -25,7 +25,7 @@ class Severity(str, Enum):
 
 
 class Flag(BaseModel):
-    """One plausibility finding, always with a human-readable reason."""
+    """One plausibility check result (pass, warn or block), always with a human-readable reason."""
 
     rule_id: str
     title: str
@@ -39,16 +39,24 @@ class Flag(BaseModel):
 
 
 class GuardResult(BaseModel):
-    flags: list[Flag]
+    checks: list[Flag]
 
+    @computed_field
+    @property
+    def flags(self) -> list[Flag]:
+        """Checks that did not pass."""
+        return [c for c in self.checks if c.severity != Severity.PASS]
+
+    @computed_field
     @property
     def blocked(self) -> bool:
-        return any(f.severity == Severity.BLOCK for f in self.flags)
+        return any(f.severity == Severity.BLOCK for f in self.checks)
 
+    @computed_field
     @property
     def status(self) -> Severity:
         if self.blocked:
             return Severity.BLOCK
-        if any(f.severity == Severity.WARN for f in self.flags):
+        if any(f.severity == Severity.WARN for f in self.checks):
             return Severity.WARN
         return Severity.PASS

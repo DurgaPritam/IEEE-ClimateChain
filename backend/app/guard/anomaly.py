@@ -39,12 +39,18 @@ class AnomalyModel:
         self.explainer = shap.TreeExplainer(self.model)
         return self
 
-    def check(self, x: BaseModel, r: EmissionsResult, ctx=None) -> Flag | None:
+    def check(self, x: BaseModel, r: EmissionsResult, ctx=None) -> Flag:
         if self.model is None:
-            return None
+            return Flag(rule_id=self.id, title=self.title, severity=Severity.PASS,
+                        reason="Not enough accepted history to train the model yet.")
         v = self._vec(x, r).reshape(1, -1)
-        if self.model.predict(v)[0] != -1:
-            return None
+        # Anomaly score in (0, 1]: higher is more unusual; the threshold is set by `contamination`.
+        score, threshold = -self.model.score_samples(v)[0], -self.model.offset_
+        expected, reported = f"score < {threshold:.2f}", f"{score:.2f}"
+        if score <= threshold:
+            return Flag(rule_id=self.id, title=self.title, severity=Severity.PASS,
+                        reason="Isolation Forest score below the review threshold.",
+                        expected=expected, reported=reported)
         # Negative SHAP values push the score towards "anomalous".
         contrib = dict(zip(self.names, self.explainer.shap_values(v)[0].round(4).tolist()))
         top = sorted(contrib.items(), key=lambda kv: kv[1])[:3]
@@ -53,7 +59,7 @@ class AnomalyModel:
             rule_id=self.id, title=self.title, severity=Severity.WARN,
             reason="Unusual combination of values compared with the plant's history; mostly driven by "
                    + ", ".join(f"{k} = {feats[k]:.3g}" for k, _ in top) + ".",
-            contributions=contrib,
+            contributions=contrib, expected=expected, reported=reported,
         )
 
 

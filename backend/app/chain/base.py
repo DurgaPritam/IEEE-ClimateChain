@@ -8,10 +8,11 @@ from pydantic import BaseModel
 class ChainError(Exception):
     """A contract revert, carrying the custom error name (e.g. "OverAllocation")."""
 
-    def __init__(self, error: str, detail: str = ""):
+    def __init__(self, error: str, detail: str = "", args: dict | None = None):
         super().__init__(f"{error}: {detail}" if detail else error)
         self.error = error
         self.detail = detail
+        self.args_ = args or {}  # decoded revert arguments, e.g. {"available_kg": 0, "requested_kg": 10_000_000}
 
 
 class TxReceipt(BaseModel):

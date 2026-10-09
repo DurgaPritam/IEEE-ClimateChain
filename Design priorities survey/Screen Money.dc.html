@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet><link rel="stylesheet" href="tokens.css"></helmet>
+<div style="min-height:900px;background:var(--vx-bg);color:var(--vx-text);font-family:var(--vx-font-sans);display:flex;flex-direction:column">
+  <dc-import name="TopBar" role="importer" tab="cost" public-link="{{ true }}" hint-size="100%,104px"></dc-import>
+  <main style="flex:1;width:100%;max-width:1360px;margin:0 auto;padding:28px 40px 32px;display:flex;flex-direction:column;gap:24px;box-sizing:border-box">
+    <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap">
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <span style="font:500 11px/1 var(--vx-font-sans);letter-spacing:0.09em;text-transform:uppercase;color:var(--vx-text-3)">SHP-2026-1207 · 10,000 t CEM I · Anatolia Cement (synthetic)</span>
+        <h1 style="margin:0;font:500 30px/1.15 var(--vx-font-sans);letter-spacing:-0.01em">CBAM certificate cost</h1>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-end">
+        <span style="font-size:12px;color:var(--vx-text-3)">Surrender year</span>
+        <div style="display:flex;padding:3px;gap:2px;background:var(--vx-surface);border:1px solid var(--vx-line);border-radius:8px;flex-wrap:wrap">
+          <sc-for list="{{ years }}" as="y" hint-placeholder-count="9">
+            <sc-if value="{{ y.active }}"><button onClick="{{ y.select }}" style="border:0;cursor:pointer;padding:7px 9px;border-radius:5px;background:var(--vx-accent);color:var(--vx-accent-ink);font:600 12px/1 var(--vx-font-mono)">{{ y.y }}</button></sc-if>
+            <sc-if value="{{ y.inactive }}"><button onClick="{{ y.select }}" style="border:0;cursor:pointer;padding:7px 9px;border-radius:5px;background:transparent;color:var(--vx-text-2);font:400 12px/1 var(--vx-font-mono)" style-hover="background:var(--vx-surface-2)">{{ y.y }}</button></sc-if>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+
+    <sc-if value="{{ isA }}" hint-placeholder-val="{{ true }}">
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(380px,1fr));gap:16px">
+        <section style="background:var(--vx-surface);border:1px solid var(--vx-line);border-radius:12px;padding:22px 24px;display:flex;flex-direction:column;gap:12px">
+          <div style="display:flex;justify-content:space-between;align-items:baseline"><span style="font:600 16px var(--vx-font-sans)">EU default values</span><span style="font-size:12px;color:var(--vx-text-3)">no supplier data</span></div>
+          <div style="display:flex;justify-content:space-between;gap:16px;font-size:14px;color:var(--vx-text-2)"><span>Embedded emissions</span><span style="font-variant-numeric:tabular-nums;white-space:nowrap">1.584 t CO₂/t</span></div>
+          <div style="display:flex;justify-content:space-between;gap:16px;font-size:14px;color:var(--vx-text-2)"><span>Free-allocation deduction</span><span style="font-variant-numeric:tabular-nums;white-space:nowrap">− {{ ded }} t CO₂/t</span></div>
+          <div style="display:flex;justify-content:space-between;gap:16px;font-size:14px;color:var(--vx-text-2)"><span>Certificates required</span><span style="font-variant-numeric:tabular-nums;white-space:nowrap">{{ dObl }} t CO₂</span></div>
+          <div style="display:flex;justify-content:space-between;font-size:14px;color:var(--vx-text-3)"><span>Turkish carbon price</span><span>not deductible on this path</span></div>
+          <div style="display:flex;justify-content:space-between;align-items:baseline;padding-top:12px;border-top:1px solid var(--vx-line-soft)"><span style="font-size:14px">Net cost</span><span style="font:300 44px/1 var(--vx-font-sans);font-variant-numeric:tabular-nums;letter-spacing:-0.02em">{{ dNet }}</span></div>
+        </section>
+        <section style="background:var(--vx-surface);border:1px solid var(--vx-verified);border-radius:12px;padding:22px 24px;display:flex;flex-direction:column;gap:12px">
+          <div style="display:flex;justify-content:space-between;align-items:center"><span style="font:600 16px var(--vx-font-sans)">Verified actual emissions</span><dc-import name="Pill" status="verified" hint-size="150px,24px"></dc-import></div>
+          <div style="display:flex;justify-content:space-between;gap:16px;font-size:14px;color:var(--vx-text-2)"><span>Embedded emissions</span><span style="font-variant-numeric:tabular-nums;white-space:nowrap">0.839 t CO₂/t</span></div>
+          <div style="display:flex;justify-content:space-between;gap:16px;font-size:14px;color:var(--vx-text-2)"><span>Free-allocation deduction</span><span style="font-variant-numeric:tabular-nums;white-space:nowrap">− {{ ded }} t CO₂/t</span></div>
+          <div style="display:flex;justify-content:space-between;gap:16px;font-size:14px;color:var(--vx-text-2)"><span>Certificates required</span><span style="font-variant-numeric:tabular-nums;white-space:nowrap">{{ vObl }} t CO₂ · {{ vGross }}</span></div>
+          <div style="display:flex;justify-content:space-between;gap:16px;font-size:14px;color:var(--vx-text-2)"><span>Turkish carbon price paid</span><span style="font-variant-numeric:tabular-nums;color:var(--vx-verified)">− {{ carbon }}</span></div>
+          <div style="display:flex;justify-content:space-between;align-items:baseline;padding-top:12px;border-top:1px solid var(--vx-line-soft)"><span style="font-size:14px">Net cost</span><span style="font:300 44px/1 var(--vx-font-sans);font-variant-numeric:tabular-nums;letter-spacing:-0.02em">{{ vNet }}</span></div>
+        </section>
+      </div>
+      <section style="display:flex;align-items:flex-end;justify-content:space-between;gap:24px;flex-wrap:wrap;padding:8px 4px 0">
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <span style="font:500 11px/1 var(--vx-font-sans);letter-spacing:0.09em;text-transform:uppercase;color:var(--vx-text-3)">Saving on this shipment · {{ year }}</span>
+          <span style="font:300 var(--vx-fs-display-xl)/0.92 var(--vx-font-sans);letter-spacing:-0.035em;font-variant-numeric:tabular-nums;color:var(--vx-verified)">{{ saving }}</span>
+        </div>
+        <span style="font-size:15px;color:var(--vx-text-2);max-width:340px;line-height:1.5;padding-bottom:14px">{{ savingPct }} lower than paying on EU default values, for the same 10,000 t of cement.</span>
+      </section>
+    </sc-if>
+
+    <sc-if value="{{ isB }}">
+      <section style="display:flex;flex-direction:column;align-items:center;text-align:center;gap:14px;padding:12px 0 8px">
+        <span style="font:500 11px/1 var(--vx-font-sans);letter-spacing:0.09em;text-transform:uppercase;color:var(--vx-text-3)">The importer saves</span>
+        <span style="font:300 clamp(96px,11vw,172px)/0.9 var(--vx-font-sans);letter-spacing:-0.04em;font-variant-numeric:tabular-nums">{{ saving }}</span>
+        <span style="font-size:16px;color:var(--vx-text-2)">on one 10,000 t shipment, surrendered in {{ year }}</span>
+      </section>
+      <section style="background:var(--vx-surface);border:1px solid var(--vx-line);border-radius:12px;padding:24px 28px;display:flex;flex-direction:column;gap:18px">
+        <div style="display:grid;grid-template-columns:200px minmax(0,1fr) 140px;gap:18px;align-items:center">
+          <div style="display:flex;flex-direction:column;gap:2px"><span style="font-size:14px">EU default values</span><span style="font-size:12px;color:var(--vx-text-3)">1.584 t CO₂/t</span></div>
+          <div style="height:28px;border-radius:3px;background:var(--vx-surface-2);overflow:hidden"><div style="height:100%;width:{{ dW }};background:var(--vx-text-3)"></div></div>
+          <span style="font:400 22px var(--vx-font-sans);font-variant-numeric:tabular-nums;text-align:right">{{ dNet }}</span>
+        </div>
+        <div style="display:grid;grid-template-columns:200px minmax(0,1fr) 140px;gap:18px;align-items:center">
+          <div style="display:flex;flex-direction:column;gap:2px"><span style="font-size:14px">Verified actual</span><span style="font-size:12px;color:var(--vx-text-3)">0.839 t CO₂/t</span></div>
+          <div style="height:28px;border-radius:3px;background:var(--vx-surface-2);overflow:hidden;display:flex"><div style="height:100%;width:{{ vW }};background:var(--vx-verified)"></div><div style="height:100%;width:{{ cW }};background:repeating-linear-gradient(135deg,var(--vx-verified) 0 3px,transparent 3px 6px);opacity:0.6"></div></div>
+          <span style="font:400 22px var(--vx-font-sans);font-variant-numeric:tabular-nums;text-align:right">{{ vNet }}</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;padding-top:14px;border-top:1px solid var(--vx-line-soft);font-size:14px;color:var(--vx-text-2)">
+          <span>▨ Turkish carbon price paid, deducted from the verified path</span><span style="font-variant-numeric:tabular-nums;color:var(--vx-text)">− {{ carbon }}</span>
+        </div>
+      </section>
+    </sc-if>
+
+    <sc-if value="{{ isC }}">
+      <div style="display:flex;gap:28px;flex-wrap:wrap;align-items:stretch">
+        <section style="flex:1 1 420px;min-width:0;display:flex;flex-direction:column;justify-content:flex-start;gap:40px">
+          <div style="display:flex;flex-direction:column;gap:10px">
+            <span style="font:500 11px/1 var(--vx-font-sans);letter-spacing:0.09em;text-transform:uppercase;color:var(--vx-text-3)">Saving · {{ year }}</span>
+            <span style="font:300 clamp(80px,8vw,128px)/0.92 var(--vx-font-sans);letter-spacing:-0.035em;font-variant-numeric:tabular-nums;color:var(--vx-verified)">{{ saving }}</span>
+          </div>
+          <div style="display:flex;flex-direction:column;border-top:1px solid var(--vx-line)">
+            <div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--vx-line-soft);font-size:15px"><span style="color:var(--vx-text-2)">Default values · 1.584 t CO₂/t</span><span style="font-variant-numeric:tabular-nums;white-space:nowrap">{{ dNet }}</span></div>
+            <div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--vx-line-soft);font-size:15px"><span style="color:var(--vx-text-2)">Verified · 0.839 t CO₂/t, gross</span><span style="font-variant-numeric:tabular-nums;white-space:nowrap">{{ vGross }}</span></div>
+            <div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--vx-line-soft);font-size:15px"><span style="color:var(--vx-text-2)">Turkish carbon price paid</span><span style="font-variant-numeric:tabular-nums;white-space:nowrap">− {{ carbon }}</span></div>
+            <div style="display:flex;justify-content:space-between;padding:12px 0;font-size:15px"><span>Verified, net</span><span style="font-variant-numeric:tabular-nums;font-weight:500">{{ vNet }}</span></div>
+          </div>
+        </section>
+        <section style="flex:1.3 1 520px;min-width:0;background:var(--vx-surface);border:1px solid var(--vx-line);border-radius:12px;padding:22px 24px;display:flex;flex-direction:column;gap:14px">
+          <div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap"><span style="font:600 15px var(--vx-font-sans)">Net cost by surrender year</span><span style="display:flex;gap:14px;font-size:12px;color:var(--vx-text-2)"><span>▮ <span style="color:var(--vx-text-3)">default</span></span><span style="color:var(--vx-verified)">▮ <span style="color:var(--vx-text-2)">verified</span></span></span></div>
+          <div style="display:grid;grid-template-columns:repeat(9,minmax(0,1fr));gap:8px;height:280px;align-items:end;border-bottom:1px solid var(--vx-line)">
+            <sc-for list="{{ years }}" as="y" hint-placeholder-count="9">
+              <button onClick="{{ y.select }}" style="height:100%;display:flex;align-items:flex-end;justify-content:center;gap:3px;border:0;padding:0 2px;cursor:pointer;border-radius:4px 4px 0 0;background:{{ y.colBg }}">
+                <span style="width:40%;height:{{ y.dH }};background:var(--vx-text-3);border-radius:2px 2px 0 0"></span>
+                <span style="width:40%;height:{{ y.vH }};background:var(--vx-verified);border-radius:2px 2px 0 0"></span>
+              </button>
+            </sc-for>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(9,minmax(0,1fr));gap:8px;font:400 11px var(--vx-font-mono);color:var(--vx-text-3);text-align:center"><sc-for list="{{ years }}" as="y"><span>{{ y.y }}</span></sc-for></div>
+          <span style="font-size:13px;color:var(--vx-text-2);line-height:1.5">Both paths rise as EU free allocation phases out, reaching zero in 2034.</span>
+        </section>
+      </div>
+    </sc-if>
+
+    <footer style="margin-top:auto;padding-top:14px;border-top:1px solid var(--vx-line-soft);display:flex;flex-wrap:wrap;gap:6px 24px;font-size:12px;color:var(--vx-text-3);line-height:1.5">
+      <span>Certificate price €75/t CO₂ (EU ETS auction average 2026, assumption; held constant)</span>
+      <span>Default value 1.584 t CO₂/t (EU default value, cement)</span>
+      <span>Free-allocation factor {{ fa }} for {{ year }}, benchmark 0.706 t CO₂/t → deduction {{ ded }} t CO₂/t</span>
+      <span>Turkish carbon price deducted from the verified path only, capped at gross cost (simplified)</span>
+    </footer>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1440,&quot;height&quot;:900},&quot;variant&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;a&quot;,&quot;b&quot;,&quot;c&quot;],&quot;default&quot;:&quot;a&quot;,&quot;tsType&quot;:&quot;'a'|'b'|'c'&quot;},&quot;year&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;min&quot;:2026,&quot;max&quot;:2034,&quot;default&quot;:2026,&quot;tsType&quot;:&quot;number&quot;}}">
+class Component extends DCLogic {
+  state = { year: null };
+  renderVals() {
+    const FA = { 2026: 0.975, 2027: 0.95, 2028: 0.90, 2029: 0.775, 2030: 0.515, 2031: 0.39, 2032: 0.265, 2033: 0.14, 2034: 0 };
+    const B = 0.687863 / 0.975, T = 10000, P = 75, PAID = 5100, DEF = 1.584, VER = 0.839;
+    const calc = y => {
+      const ded = B * FA[y];
+      const dObl = T * Math.max(0, DEF - ded), vObl = T * Math.max(0, VER - ded);
+      const dNet = dObl * P, vGross = vObl * P, carbon = Math.min(PAID, vGross), vNet = vGross - carbon;
+      return { ded, dObl, vObl, dNet, vGross, carbon, vNet, saving: dNet - vNet };
+    };
+    const year = this.state.year ?? this.props.year ?? 2026;
+    const c = calc(year);
+    const eur = n => '€' + Math.round(n).toLocaleString('en-US');
+    const t = n => Math.round(n).toLocaleString('en-US');
+    const max = calc(2034).dNet;
+    const v = this.props.variant ?? 'a';
+    return {
+      isA: v === 'a', isB: v === 'b', isC: v === 'c', year, fa: FA[year],
+      ded: c.ded.toFixed(3), dObl: t(c.dObl), vObl: t(c.vObl),
+      dNet: eur(c.dNet), vGross: eur(c.vGross), carbon: eur(c.carbon), vNet: eur(c.vNet), saving: eur(c.saving),
+      savingPct: Math.round(c.saving / c.dNet * 100) + '%',
+      dW: '100%', vW: (c.vNet / c.dNet * 100).toFixed(2) + '%', cW: (c.carbon / c.dNet * 100).toFixed(2) + '%',
+      years: Object.keys(FA).map(Number).map(y => {
+        const k = calc(y);
+        return { y, active: y === year, inactive: y !== year, select: () => this.setState({ year: y }),
+          dH: (k.dNet / max * 100).toFixed(1) + '%', vH: Math.max(0.6, k.vNet / max * 100).toFixed(1) + '%',
+          colBg: y === year ? 'var(--vx-surface-2)' : 'transparent' };
+      }),
+    };
+  }
+}
+</script>
+</body>
+</html>

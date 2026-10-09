@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet><link rel="stylesheet" href="tokens.css"></helmet>
+<div style="min-height:900px;background:var(--vx-bg);color:var(--vx-text);font-family:var(--vx-font-sans)">
+  <dc-import name="TopBar" role="importer" tab="disclosure" public-link="{{ true }}" hint-size="100%,104px"></dc-import>
+  <main style="max-width:1360px;margin:0 auto;padding:28px 40px 40px;display:flex;flex-direction:column;gap:20px;box-sizing:border-box">
+    <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap">
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <span style="font:500 11px/1 var(--vx-font-sans);letter-spacing:0.09em;text-transform:uppercase;color:var(--vx-text-3)">Disclosure package · issued to Nordhafen Baustoffe GmbH (synthetic)</span>
+        <h1 style="margin:0;font:500 30px/1.15 var(--vx-font-sans);letter-spacing:-0.01em">Shipment SHP-2026-1207</h1>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:var(--vx-text-2)">All checks verified in your browser<dc-import name="Pill" status="verified" hint-size="160px,24px"></dc-import></div>
+    </div>
+
+    <section style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1px;background:var(--vx-line);border:1px solid var(--vx-line);border-radius:12px;overflow:hidden">
+      <div style="background:var(--vx-surface);padding:22px 24px;display:flex;flex-direction:column;gap:8px;grid-column:span 2">
+        <span style="font-size:12px;color:var(--vx-text-3)">Verified embedded emissions</span>
+        <span style="font:300 72px/0.95 var(--vx-font-sans);letter-spacing:-0.03em;font-variant-numeric:tabular-nums">0.839 <span style="font-size:18px;letter-spacing:0;color:var(--vx-text-2)">t CO₂/t</span></span>
+        <span style="font-size:13px;color:var(--vx-text-2)">direct 0.807 · indirect 0.032</span>
+      </div>
+      <div style="background:var(--vx-surface);padding:22px 24px;display:flex;flex-direction:column;gap:8px">
+        <span style="font-size:12px;color:var(--vx-text-3)">Tonnes</span>
+        <span style="font:300 40px/1 var(--vx-font-sans);font-variant-numeric:tabular-nums">10,000 <span style="font-size:15px;color:var(--vx-text-3)">t</span></span>
+        <span style="font-size:13px;color:var(--vx-text-2)">Portland cement CEM I · CN 2523 29 00</span>
+      </div>
+      <div style="background:var(--vx-surface);padding:22px 24px;display:flex;flex-direction:column;gap:8px">
+        <span style="font-size:12px;color:var(--vx-text-3)">Installation · period</span>
+        <span style="font:400 20px/1.3 var(--vx-font-sans)">Anatolia Cement (synthetic)</span>
+        <span style="font:400 13px var(--vx-font-mono);color:var(--vx-text-2)">TR-ANA-01 · 2026-12</span>
+      </div>
+    </section>
+
+    <div style="display:flex;gap:20px;flex-wrap:wrap;align-items:flex-start">
+      <section style="flex:1.4 1 560px;min-width:0;background:var(--vx-surface);border:1px solid var(--vx-line);border-radius:12px;overflow:hidden">
+        <div style="padding:20px 22px 14px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap"><span style="font:600 16px/1.3 var(--vx-font-sans)">Verification checklist</span><span style="font-size:12px;color:var(--vx-text-3)">Checked locally · nothing to trust on this server</span></div>
+        <sc-for list="{{ checks }}" as="c" hint-placeholder-count="5">
+          <div style="display:grid;grid-template-columns:28px minmax(0,1fr) auto;gap:14px;align-items:center;padding:14px 22px;border-top:1px solid var(--vx-line-soft)">
+            <span style="width:22px;height:22px;box-sizing:border-box;border:1.5px solid var(--vx-pass);color:var(--vx-pass);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700">✓</span>
+            <div style="display:flex;flex-direction:column;gap:3px;min-width:0"><span style="font:500 14px/1.3 var(--vx-font-sans)">{{ c.title }}</span><span style="font-size:13px;color:var(--vx-text-3)">{{ c.sub }}</span></div>
+            <div><dc-import name="Hash" value="{{ c.hash }}" explorer="{{ c.explorer }}" hint-size="190px,28px"></dc-import></div>
+          </div>
+        </sc-for>
+        <div style="padding:14px 22px 18px;border-top:1px solid var(--vx-line-soft);display:flex;flex-direction:column;gap:10px">
+          <span style="font:500 14px/1.3 var(--vx-font-sans)">Merkle proof per disclosed field <span style="color:var(--vx-text-3);font-weight:400">· 8 of 8 verify against root 0xa71c…d03f</span></span>
+          <div style="display:flex;flex-wrap:wrap;gap:6px">
+            <sc-for list="{{ disclosed }}" as="d" hint-placeholder-count="8"><span style="display:inline-flex;align-items:center;gap:6px;height:26px;padding:0 9px;border:1px solid var(--vx-line);border-radius:5px;font:400 12px var(--vx-font-mono);color:var(--vx-text-2)"><span style="color:var(--vx-pass)">✓</span>{{ d }}</span></sc-for>
+          </div>
+        </div>
+      </section>
+
+      <section style="flex:1 1 400px;min-width:0;border:1px dashed var(--vx-line);border-radius:12px;padding:22px;display:flex;flex-direction:column;gap:16px">
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <span style="font:500 11px/1 var(--vx-font-sans);letter-spacing:0.09em;text-transform:uppercase;color:var(--vx-text-3)">What you are not seeing</span>
+          <span style="font:400 22px/1.3 var(--vx-font-sans)">23 private fields stay with the plant.</span>
+          <span style="font-size:13px;color:var(--vx-text-2);line-height:1.5">They are committed in the same Merkle tree, so the plant cannot change them later. You see only that they exist.</span>
+        </div>
+        <sc-for list="{{ privateGroups }}" as="g" hint-placeholder-count="6">
+          <div style="display:flex;flex-direction:column;gap:6px">
+            <span style="font-size:12px;color:var(--vx-text-2)">{{ g.name }} <span style="color:var(--vx-text-3)">· {{ g.n }}</span></span>
+            <div style="display:flex;gap:4px;flex-wrap:wrap"><sc-for list="{{ g.bars }}" as="w"><span style="height:10px;border-radius:2px;background:repeating-linear-gradient(135deg,var(--vx-surface-2) 0 3px,var(--vx-line-soft) 3px 6px);width:{{ w }}"></span></sc-for></div>
+          </div>
+        </sc-for>
+      </section>
+    </div>
+
+    <a href="#" style="display:flex;justify-content:space-between;align-items:center;padding:18px 22px;border:1px solid var(--vx-line);border-radius:10px;background:var(--vx-surface);color:var(--vx-text);text-decoration:none">
+      <span style="font-size:15px">CBAM cost for this shipment: default values vs verified</span><span style="color:var(--vx-accent);font-weight:500">Open cost comparison →</span>
+    </a>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1440,&quot;height&quot;:1000}}">
+class Component extends DCLogic {
+  renderVals() {
+    const groups = [['Production volumes', 4], ['Clinker chemistry (CaO, MgO)', 2], ['Fuel mix', 7], ['Electricity and contracts', 2], ['Emissions breakdown by source', 4], ['Declarations and evidence', 4]];
+    const widths = [48, 64, 36, 56, 72, 40, 52];
+    return {
+      checks: [
+        { title: 'Report hash', sub: 'Recomputed from the signed header (RFC 8785)', hash: '3f9a6c1e8b2d47a0915fce3d26b8e4a17c0d59f2a38be61d4c7f09a2e5b3c21e', explorer: false },
+        { title: 'Plant signature · ML-DSA-65 + ECDSA P-256', sub: 'Both components verify · key TR-ANA-01', hash: '5b0e9a3c7f14d6e208c5b7a193e2f40d6a1c8e57b2d03f96e47a1c058d9b62f3', explorer: false },
+        { title: 'Verifier signature · ML-DSA-65 + ECDSA P-256', sub: 'Bosphorus Verification (synthetic) · allow-listed, not the operator', hash: '81c3e0f74a29d6b5e0c8137f2a4d9b60e5f13c78d0a26b94f7e1c53a08d4b2e9', explorer: false },
+        { title: 'On-chain receipt · anchorReport', sub: 'Block #14,882,316 · hash matches', hash: '9e4b1c07d2f86a35b0c7e9143a5d68f2c1e09b746f2a85d307b4e1c958a3d26e', explorer: true },
+        { title: 'On-chain receipt · coSign', sub: 'Block #14,901,072 · status verified', hash: '2d7f0a91c6e3b5481f9d72a0e8b54c136a0f9d27b3c81e65d94a07f21e6b38c5', explorer: true },
+        { title: 'On-chain receipt · allocate', sub: '10,000 t to this shipment · 38,509.2 t remained', hash: 'b8f42d6a13c09e75d6a1f83b2e5c07d994b6a1e37f0d58c2a3e9b14f60c7d25a', explorer: true },
+      ],
+      disclosed: ['installation_id', 'period', 'product_cn', 'see_total', 'see_direct', 'see_indirect', 'verifier_id', 'carbon_price_eur_per_t'],
+      privateGroups: groups.map(([name, n], gi) => ({ name, n, bars: Array.from({ length: n }, (_, i) => widths[(i + gi) % widths.length] + 'px') })),
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -85,7 +85,8 @@ class MemoryChain:
             raise ChainError("ShipmentAlreadyAllocated")
         available = r.verified_kg - r.allocated_kg
         if kg > available:
-            raise ChainError("OverAllocation", f"available {available} kg, requested {kg} kg")
+            raise ChainError("OverAllocation", f"available {available} kg, requested {kg} kg",
+                             {"available_kg": available, "requested_kg": kg})
         r.allocated_kg += kg
         self.shipments.add(shipment_id)
         return self._tx("TonnesAllocated", report_hash=report_hash, shipment_id=shipment_id,

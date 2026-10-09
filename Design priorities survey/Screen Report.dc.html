@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet><link rel="stylesheet" href="tokens.css"></helmet>
+<div style="min-height:900px;background:var(--vx-bg);color:var(--vx-text);font-family:var(--vx-font-sans)">
+  <dc-import name="TopBar" role="plant" tab="report" plant="{{ plantName }}" hint-size="100%,104px"></dc-import>
+  <main style="max-width:1360px;margin:0 auto;padding:28px 40px 40px;display:flex;flex-direction:column;gap:20px;box-sizing:border-box">
+    <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap">
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <span style="font:500 11px/1 var(--vx-font-sans);letter-spacing:0.09em;text-transform:uppercase;color:var(--vx-text-3)">Report · December 2026 · {{ plantId }} · {{ cementType }}</span>
+        <h1 style="margin:0;font:500 30px/1.15 var(--vx-font-sans);letter-spacing:-0.01em">Embedded emissions and plausibility</h1>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:var(--vx-text-2)">{{ summary }}<dc-import name="Pill" status="{{ overall }}" hint-size="120px,24px"></dc-import></div>
+    </div>
+
+    <sc-if value="{{ isPass }}" hint-placeholder-val="{{ true }}">
+      <div style="display:flex;align-items:center;gap:14px;padding:14px 18px;border:1px solid var(--vx-pass);border-radius:8px;background:var(--vx-pass-bg)">
+        <span style="width:22px;height:22px;box-sizing:border-box;border:1.5px solid var(--vx-pass);color:var(--vx-pass);border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex:none">✓</span>
+        <span style="font-size:15px">All 8 checks passed. This report can be signed and anchored.</span>
+      </div>
+    </sc-if>
+    <sc-if value="{{ isFlagged }}">
+      <div style="display:flex;align-items:center;gap:14px;padding:14px 18px;border:1px solid var(--vx-warn);border-radius:8px;background:var(--vx-warn-bg)">
+        <span style="color:var(--vx-warn);font-size:18px;flex:none">▲</span>
+        <span style="font-size:15px"><strong style="font-weight:600">2 checks need human review.</strong> You can sign. The verifier sees every flag and its reason before deciding whether to co-sign.</span>
+      </div>
+    </sc-if>
+    <sc-if value="{{ isBlocked }}">
+      <div style="display:flex;gap:18px;padding:22px 24px;border:1.5px solid var(--vx-block);border-radius:10px;background:var(--vx-block-bg)">
+        <span style="width:34px;height:34px;border-radius:4px;background:var(--vx-block);color:var(--vx-on-status);display:inline-flex;align-items:center;justify-content:center;font-size:17px;font-weight:700;flex:none">✕</span>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <span style="font:600 12px/1 var(--vx-font-sans);letter-spacing:0.09em;text-transform:uppercase;color:var(--vx-block)">Blocked · cannot sign · returned to plant</span>
+          <span style="font:500 22px/1.3 var(--vx-font-sans);text-wrap:pretty;max-width:900px">Reported process CO₂ is below the chemical minimum for 98,560 t of clinker at the declared CaO/MgO content.</span>
+          <span style="font-size:14px;color:var(--vx-text-2)">Expected ≥ 51,560 t CO₂ · reported 42,090 t CO₂. Nothing has been signed or written on-chain. Correct the data and resubmit.</span>
+        </div>
+      </div>
+    </sc-if>
+
+    <div style="display:flex;gap:20px;flex-wrap:wrap;align-items:flex-start">
+      <section style="flex:1 1 420px;min-width:0;display:flex;flex-direction:column;gap:20px;background:var(--vx-surface);border:1px solid var(--vx-line);border-radius:12px;padding:28px">
+        <span style="font:500 11px/1 var(--vx-font-sans);letter-spacing:0.09em;text-transform:uppercase;color:var(--vx-text-3)">Embedded emissions intensity · {{ intensityNote }}</span>
+        <div style="display:flex;align-items:baseline;gap:14px;flex-wrap:wrap">
+          <span style="font:300 var(--vx-fs-display)/0.95 var(--vx-font-sans);letter-spacing:-0.03em;font-variant-numeric:tabular-nums;color:{{ heroColor }}">{{ intensity }}</span>
+          <span style="font:400 20px/1 var(--vx-font-sans);color:var(--vx-text-2)">t CO₂/t cement</span>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <div style="border:1px solid var(--vx-line-soft);border-radius:8px;padding:14px 16px;display:flex;flex-direction:column;gap:6px;background:var(--vx-bg)">
+            <span style="font-size:12px;color:var(--vx-text-3)">Direct</span>
+            <span style="font:400 28px/1 var(--vx-font-sans);font-variant-numeric:tabular-nums">{{ direct }}</span>
+            <span style="font-size:12px;color:var(--vx-text-3)">calcination + kiln fuel</span>
+          </div>
+          <div style="border:1px solid var(--vx-line-soft);border-radius:8px;padding:14px 16px;display:flex;flex-direction:column;gap:6px;background:var(--vx-bg)">
+            <span style="font-size:12px;color:var(--vx-text-3)">Indirect</span>
+            <span style="font:400 28px/1 var(--vx-font-sans);font-variant-numeric:tabular-nums">{{ indirect }}</span>
+            <span style="font-size:12px;color:var(--vx-text-3)">kiln + grinding electricity</span>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:14px;padding-top:6px;border-top:1px solid var(--vx-line-soft)">
+          <span style="font:600 14px/1 var(--vx-font-sans);padding-top:14px">Source breakdown <span style="font-weight:400;color:var(--vx-text-3)">· t CO₂/t cement</span></span>
+          <sc-for list="{{ breakdown }}" as="b" hint-placeholder-count="4">
+            <div style="display:flex;flex-direction:column;gap:6px">
+              <div style="display:flex;justify-content:space-between;font-size:13px"><span style="color:var(--vx-text-2)">{{ b.name }} <span style="color:var(--vx-text-3)">· {{ b.kind }}</span></span><span style="font-variant-numeric:tabular-nums">{{ b.value }} <span style="color:var(--vx-text-3)">{{ b.pct }}</span></span></div>
+              <div style="height:6px;border-radius:3px;background:var(--vx-surface-2)"><div style="height:100%;border-radius:3px;background:var(--vx-accent);width:{{ b.w }}"></div></div>
+            </div>
+          </sc-for>
+        </div>
+      </section>
+
+      <section style="flex:1.6 1 600px;min-width:0;background:var(--vx-surface);border:1px solid var(--vx-line);border-radius:12px;overflow:hidden">
+        <div style="display:flex;justify-content:space-between;align-items:baseline;padding:20px 22px 14px;gap:12px;flex-wrap:wrap">
+          <span style="font:600 16px/1.3 var(--vx-font-sans)">Plausibility checks</span>
+          <span style="font-size:12px;color:var(--vx-text-3)">Thresholds from cement.yaml · every flag has a reason</span>
+        </div>
+        <div style="display:grid;grid-template-columns:136px minmax(0,1fr) 120px 120px;gap:16px;padding:8px 22px;border-top:1px solid var(--vx-line-soft);border-bottom:1px solid var(--vx-line-soft);font:500 11px/1.2 var(--vx-font-sans);letter-spacing:0.08em;text-transform:uppercase;color:var(--vx-text-3)"><span>Status</span><span>Rule · reason</span><span>Expected</span><span>Reported</span></div>
+        <sc-for list="{{ checks }}" as="c" hint-placeholder-count="8">
+          <div style="display:grid;grid-template-columns:136px minmax(0,1fr) 120px 120px;gap:16px;align-items:start;padding:13px 22px;border-bottom:1px solid var(--vx-line-soft);background:{{ c.bg }}">
+            <dc-import name="Pill" status="{{ c.status }}" hint-size="110px,24px"></dc-import>
+            <div style="display:flex;flex-direction:column;gap:3px;min-width:0"><span style="font:500 14px/1.3 var(--vx-font-sans)">{{ c.title }}</span><span style="font-size:13px;line-height:1.45;color:var(--vx-text-2);text-wrap:pretty">{{ c.reason }}</span></div>
+            <span style="font:400 13px/1.4 var(--vx-font-mono);color:var(--vx-text-2);padding-top:2px">{{ c.expected }}</span>
+            <span style="font:500 13px/1.4 var(--vx-font-mono);padding-top:2px;color:{{ c.color }}">{{ c.reported }}</span>
+          </div>
+        </sc-for>
+      </section>
+    </div>
+
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:16px 20px;border:1px solid var(--vx-line);border-radius:10px;background:var(--vx-surface)">
+      <span style="font-size:13px;color:var(--vx-text-2)">{{ footnote }}</span>
+      <div style="display:flex;gap:10px">
+        <button style="height:40px;padding:0 16px;border:1px solid var(--vx-line);border-radius:7px;background:transparent;color:var(--vx-text);font:500 14px var(--vx-font-sans);cursor:pointer">Edit data</button>
+        <sc-if value="{{ canSign }}" hint-placeholder-val="{{ true }}"><button style="height:40px;padding:0 20px;border:0;border-radius:7px;background:var(--vx-accent);color:var(--vx-accent-ink);font:600 14px var(--vx-font-sans);cursor:pointer">Sign &amp; anchor →</button></sc-if>
+        <sc-if value="{{ isBlocked }}"><button disabled="{{ true }}" style="height:40px;padding:0 20px;border:1px dashed var(--vx-line);border-radius:7px;background:var(--vx-surface-2);color:var(--vx-text-3);font:600 14px var(--vx-font-sans);cursor:not-allowed">Signing unavailable · blocked</button></sc-if>
+      </div>
+    </div>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1440,&quot;height&quot;:1000},&quot;state&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;pass&quot;,&quot;flagged&quot;,&quot;blocked&quot;],&quot;default&quot;:&quot;pass&quot;,&quot;tsType&quot;:&quot;'pass'|'flagged'|'blocked'&quot;}}">
+class Component extends DCLogic {
+  renderVals() {
+    const st = this.props.state ?? 'pass';
+    const P = (status, title, reason, expected, reported) => ({ status, title, reason, expected, reported,
+      bg: status === 'block' ? 'var(--vx-block-bg)' : status === 'warn' ? 'var(--vx-warn-bg)' : 'transparent',
+      color: status === 'block' ? 'var(--vx-block)' : status === 'warn' ? 'var(--vx-warn)' : 'var(--vx-text)' });
+    const D = {
+      pass: { plantName: 'Anatolia Cement – Ankara', plantId: 'TR-ANA-01', cementType: 'CEM I', intensity: '0.839', direct: '0.807', indirect: '0.032',
+        br: [0.497, 0.310, 0.013, 0.019],
+        checks: [
+          P('pass', 'Clinker oxide content', 'CaO within the range for Portland clinker.', '0.60–0.69', '0.6553'),
+          P('pass', 'Calcination floor', 'Reported process CO₂ is at or above the chemical minimum for 85,140 t of clinker.', '≥ 44,571 t CO₂', '45,481 t CO₂'),
+          P('pass', 'Kiln energy per tonne of clinker', 'Thermal energy within the realistic band for dry-process kilns.', '2.9–4.5 GJ/t', '3.45 GJ/t'),
+          P('pass', 'Clinker-to-cement ratio', 'Ratio matches declared type CEM I.', '0.90–0.97', '0.930'),
+          P('pass', 'Mass balance', 'Cement output is covered by clinker plus additives.', '≤ 94,254 t', '91,509 t'),
+          P('pass', 'Electricity per tonne of cement', "Within the plant's own history (±3σ, 23 months).", '66–80 kWh/t', '72 kWh/t'),
+          P('pass', 'Sudden improvement', 'Month-on-month change within the 15% threshold.', 'drop ≤ 15%', '0.846 → 0.839'),
+          P('pass', 'Anomaly model', 'Isolation Forest score below the review threshold.', 'score < 0.60', '0.41'),
+        ] },
+      flagged: { plantName: 'Anatolia Cement – Ankara', plantId: 'TR-ANA-01', cementType: 'CEM I', intensity: '0.826', direct: '0.807', indirect: '0.019',
+        br: [0.497, 0.310, 0.008, 0.011],
+        checks: [
+          P('pass', 'Clinker oxide content', 'CaO within the range for Portland clinker.', '0.60–0.69', '0.6553'),
+          P('pass', 'Calcination floor', 'Reported process CO₂ is at or above the chemical minimum for 85,140 t of clinker.', '≥ 44,571 t CO₂', '45,481 t CO₂'),
+          P('pass', 'Kiln energy per tonne of clinker', 'Thermal energy within the realistic band for dry-process kilns.', '2.9–4.5 GJ/t', '3.45 GJ/t'),
+          P('pass', 'Clinker-to-cement ratio', 'Ratio matches declared type CEM I.', '0.90–0.97', '0.930'),
+          P('pass', 'Mass balance', 'Cement output is covered by clinker plus additives.', '≤ 94,254 t', '91,509 t'),
+          P('warn', 'Electricity per tonne of cement', "Electricity use outside the plant's own history — indirect emissions may be missing.", '66–80 kWh/t', '58 kWh/t'),
+          P('pass', 'Sudden improvement', 'Month-on-month change within the 15% threshold.', 'drop ≤ 15%', '0.846 → 0.826'),
+          P('warn', 'Anomaly model', 'Unusual combination of inputs. Largest contributions: electricity per tonne, kiln energy.', 'score < 0.60', '0.71'),
+        ] },
+      blocked: { plantName: 'Marmara Cement – Kocaeli', plantId: 'TR-MAR-03', cementType: 'CEM I', intensity: '0.790', direct: '0.756', indirect: '0.034',
+        br: [0.402, 0.354, 0.014, 0.020],
+        checks: [
+          P('pass', 'Clinker oxide content', 'CaO within the range for Portland clinker.', '0.60–0.69', '0.6549'),
+          P('block', 'Calcination floor', 'Reported process CO₂ is below the chemical minimum for 98,560 t of clinker at the declared CaO/MgO content.', '≥ 51,560 t CO₂', '42,090 t CO₂'),
+          P('pass', 'Kiln energy per tonne of clinker', 'Thermal energy within the realistic band for dry-process kilns.', '2.9–4.5 GJ/t', '3.70 GJ/t'),
+          P('pass', 'Clinker-to-cement ratio', 'Ratio matches declared type CEM I.', '0.90–0.97', '0.940'),
+          P('pass', 'Mass balance', 'Cement output is covered by clinker plus additives.', '≤ 108,000 t', '104,851 t'),
+          P('pass', 'Electricity per tonne of cement', "Within the plant's own history (±3σ, 23 months).", '70–86 kWh/t', '78 kWh/t'),
+          P('pass', 'Sudden improvement', 'Month-on-month change within the 15% threshold.', 'drop ≤ 15%', '0.884 → 0.790'),
+          P('pass', 'Anomaly model', 'Isolation Forest score below the review threshold.', 'score < 0.60', '0.52'),
+        ] },
+    }[st] || {};
+    const total = D.br.reduce((a, b) => a + b, 0);
+    const names = [['Calcination', 'direct'], ['Kiln fuel', 'direct'], ['Kiln electricity', 'indirect'], ['Grinding electricity', 'indirect']];
+    return {
+      ...D,
+      isPass: st === 'pass', isFlagged: st === 'flagged', isBlocked: st === 'blocked', canSign: st !== 'blocked',
+      overall: st === 'pass' ? 'pass' : st === 'flagged' ? 'warn' : 'block',
+      summary: st === 'pass' ? '8 of 8 checks pass' : st === 'flagged' ? '6 pass · 2 need review' : '7 pass · 1 blocked',
+      intensityNote: st === 'blocked' ? 'as reported · not signable' : 'December 2026',
+      heroColor: st === 'blocked' ? 'var(--vx-text-3)' : 'var(--vx-text)',
+      breakdown: D.br.map((v, i) => ({ name: names[i][0], kind: names[i][1], value: v.toFixed(3), pct: Math.round(v / total * 100) + '%', w: (v / total * 100).toFixed(1) + '%' })),
+      footnote: st === 'blocked' ? 'A block returns the data to the plant. The guard never accuses anyone automatically.' : st === 'flagged' ? 'Signing sends the report and both flags to the verifier queue.' : 'Signing creates a hybrid ML-DSA-65 + ECDSA P-256 signature over the report header.',
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet><link rel="stylesheet" href="tokens.css"></helmet>
+<div style="min-height:900px;background:var(--vx-bg);color:var(--vx-text);font-family:var(--vx-font-sans)">
+  <dc-import name="TopBar" role="plant" tab="submit" hint-size="100%,104px"></dc-import>
+  <main style="max-width:1360px;margin:0 auto;padding:28px 40px 40px;display:flex;gap:24px;flex-wrap:wrap;align-items:flex-start;box-sizing:border-box">
+    <div style="flex:1 1 640px;min-width:0;display:flex;flex-direction:column;gap:20px">
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <span style="font:500 11px/1 var(--vx-font-sans);letter-spacing:0.09em;text-transform:uppercase;color:var(--vx-text-3)">Reporting period · December 2026 · TR-ANA-01</span>
+        <h1 style="margin:0;font:500 30px/1.15 var(--vx-font-sans);letter-spacing:-0.01em">Submit month</h1>
+      </div>
+
+      <section style="background:var(--vx-surface);border:1px solid var(--vx-line);border-radius:12px;padding:22px 24px;display:flex;flex-direction:column;gap:16px">
+        <span style="font:600 16px/1.3 var(--vx-font-sans)">Production</span>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px 16px">
+          <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:13px;color:var(--vx-text-2)">Clinker produced</span><span style="display:flex;align-items:center;height:40px;border:1px solid var(--vx-line);border-radius:7px;background:var(--vx-bg)"><input defaultValue="85,140.2" style="flex:1;min-width:0;height:100%;border:0;background:transparent;color:var(--vx-text);font:400 15px var(--vx-font-sans);font-variant-numeric:tabular-nums;padding:0 12px;outline:none"><span style="padding:0 12px;height:100%;display:flex;align-items:center;border-left:1px solid var(--vx-line-soft);font:400 12px var(--vx-font-mono);color:var(--vx-text-3)">t</span></span></label>
+          <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:13px;color:var(--vx-text-2)">Clinker consumed</span><span style="display:flex;align-items:center;height:40px;border:1px solid var(--vx-line);border-radius:7px;background:var(--vx-bg)"><input defaultValue="85,096.4" style="flex:1;min-width:0;height:100%;border:0;background:transparent;color:var(--vx-text);font:400 15px var(--vx-font-sans);font-variant-numeric:tabular-nums;padding:0 12px;outline:none"><span style="padding:0 12px;height:100%;display:flex;align-items:center;border-left:1px solid var(--vx-line-soft);font:400 12px var(--vx-font-mono);color:var(--vx-text-3)">t</span></span></label>
+          <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:13px;color:var(--vx-text-2)">Additives</span><span style="display:flex;align-items:center;height:40px;border:1px solid var(--vx-line);border-radius:7px;background:var(--vx-bg)"><input defaultValue="6,412.8" style="flex:1;min-width:0;height:100%;border:0;background:transparent;color:var(--vx-text);font:400 15px var(--vx-font-sans);font-variant-numeric:tabular-nums;padding:0 12px;outline:none"><span style="padding:0 12px;height:100%;display:flex;align-items:center;border-left:1px solid var(--vx-line-soft);font:400 12px var(--vx-font-mono);color:var(--vx-text-3)">t</span></span></label>
+          <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:13px;color:var(--vx-text-2)">Cement produced</span><span style="display:flex;align-items:center;height:40px;border:1px solid var(--vx-line);border-radius:7px;background:var(--vx-bg)"><input defaultValue="91,509.2" style="flex:1;min-width:0;height:100%;border:0;background:transparent;color:var(--vx-text);font:400 15px var(--vx-font-sans);font-variant-numeric:tabular-nums;padding:0 12px;outline:none"><span style="padding:0 12px;height:100%;display:flex;align-items:center;border-left:1px solid var(--vx-line-soft);font:400 12px var(--vx-font-mono);color:var(--vx-text-3)">t</span></span></label>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <span style="font-size:13px;color:var(--vx-text-2)">Cement type</span>
+          <div style="display:flex;padding:3px;gap:2px;background:var(--vx-bg);border:1px solid var(--vx-line);border-radius:8px;width:max-content;max-width:100%;flex-wrap:wrap">
+            <span style="padding:8px 14px;border-radius:6px;background:var(--vx-surface-2);box-shadow:inset 0 0 0 1px var(--vx-accent);font:500 13px/1 var(--vx-font-sans)">CEM I</span>
+            <span style="padding:8px 14px;border-radius:6px;font:400 13px/1 var(--vx-font-sans);color:var(--vx-text-3)">CEM II/A</span>
+            <span style="padding:8px 14px;border-radius:6px;font:400 13px/1 var(--vx-font-sans);color:var(--vx-text-3)">CEM II/B</span>
+            <span style="padding:8px 14px;border-radius:6px;font:400 13px/1 var(--vx-font-sans);color:var(--vx-text-3)">CEM III/A</span>
+          </div>
+        </div>
+      </section>
+
+      <section style="background:var(--vx-surface);border:1px solid var(--vx-line);border-radius:12px;padding:22px 24px;display:flex;flex-direction:column;gap:16px">
+        <span style="font:600 16px/1.3 var(--vx-font-sans)">Clinker chemistry and kiln fuels</span>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px 16px">
+          <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:13px;color:var(--vx-text-2)">Clinker CaO</span><span style="display:flex;align-items:center;height:40px;border:1px solid var(--vx-line);border-radius:7px;background:var(--vx-bg)"><input defaultValue="0.6553" style="flex:1;min-width:0;height:100%;border:0;background:transparent;color:var(--vx-text);font:400 15px var(--vx-font-sans);font-variant-numeric:tabular-nums;padding:0 12px;outline:none"><span style="padding:0 12px;height:100%;display:flex;align-items:center;border-left:1px solid var(--vx-line-soft);font:400 12px var(--vx-font-mono);color:var(--vx-text-3)">fraction</span></span></label>
+          <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:13px;color:var(--vx-text-2)">Clinker MgO</span><span style="display:flex;align-items:center;height:40px;border:1px solid var(--vx-line);border-radius:7px;background:var(--vx-bg)"><input defaultValue="0.0181" style="flex:1;min-width:0;height:100%;border:0;background:transparent;color:var(--vx-text);font:400 15px var(--vx-font-sans);font-variant-numeric:tabular-nums;padding:0 12px;outline:none"><span style="padding:0 12px;height:100%;display:flex;align-items:center;border-left:1px solid var(--vx-line-soft);font:400 12px var(--vx-font-mono);color:var(--vx-text-3)">fraction</span></span></label>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) 40px;gap:10px;font:500 11px/1 var(--vx-font-sans);letter-spacing:0.08em;text-transform:uppercase;color:var(--vx-text-3)"><span>Fuel type</span><span>Quantity</span><span></span></div>
+          <sc-for list="{{ fuels }}" as="f" hint-placeholder-count="3">
+            <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) 40px;gap:10px">
+              <span style="display:flex;align-items:center;justify-content:space-between;height:40px;padding:0 12px;border:1px solid var(--vx-line);border-radius:7px;background:var(--vx-bg);font-size:15px">{{ f.type }}<span style="color:var(--vx-text-3);font-size:10px">▾</span></span>
+              <span style="display:flex;align-items:center;height:40px;border:1px solid var(--vx-line);border-radius:7px;background:var(--vx-bg)"><span style="flex:1;padding:0 12px;font-size:15px;font-variant-numeric:tabular-nums">{{ f.t }}</span><span style="padding:0 12px;height:100%;display:flex;align-items:center;border-left:1px solid var(--vx-line-soft);font:400 12px var(--vx-font-mono);color:var(--vx-text-3)">t</span></span>
+              <button onClick="{{ f.remove }}" style="height:40px;border:1px solid var(--vx-line-soft);border-radius:7px;background:transparent;color:var(--vx-text-3);cursor:pointer;font-size:14px">✕</button>
+            </div>
+          </sc-for>
+          <button onClick="{{ addFuel }}" style="align-self:flex-start;height:36px;padding:0 14px;border:1px dashed var(--vx-line);border-radius:7px;background:transparent;color:var(--vx-text-2);font:500 13px var(--vx-font-sans);cursor:pointer">+ Add fuel</button>
+          <span style="font-size:12px;color:var(--vx-text-3)">Petcoke · coal · lignite · natural gas · fuel oil · waste tyres · biomass. Biomass share is excluded from fossil CO₂.</span>
+        </div>
+      </section>
+
+      <section style="background:var(--vx-surface);border:1px solid var(--vx-line);border-radius:12px;padding:22px 24px;display:flex;flex-direction:column;gap:16px">
+        <span style="font:600 16px/1.3 var(--vx-font-sans)">Electricity, declarations and carbon price</span>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px 16px">
+          <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:13px;color:var(--vx-text-2)">Electricity · kiln</span><span style="display:flex;align-items:center;height:40px;border:1px solid var(--vx-line);border-radius:7px;background:var(--vx-bg)"><input defaultValue="2,724.5" style="flex:1;min-width:0;height:100%;border:0;background:transparent;color:var(--vx-text);font:400 15px var(--vx-font-sans);padding:0 12px;outline:none"><span style="padding:0 12px;height:100%;display:flex;align-items:center;border-left:1px solid var(--vx-line-soft);font:400 12px var(--vx-font-mono);color:var(--vx-text-3)">MWh</span></span></label>
+          <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:13px;color:var(--vx-text-2)">Electricity · grinding</span><span style="display:flex;align-items:center;height:40px;border:1px solid var(--vx-line);border-radius:7px;background:var(--vx-bg)"><input defaultValue="3,843.4" style="flex:1;min-width:0;height:100%;border:0;background:transparent;color:var(--vx-text);font:400 15px var(--vx-font-sans);padding:0 12px;outline:none"><span style="padding:0 12px;height:100%;display:flex;align-items:center;border-left:1px solid var(--vx-line-soft);font:400 12px var(--vx-font-mono);color:var(--vx-text-3)">MWh</span></span></label>
+          <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:13px;color:var(--vx-text-2)">Reported process CO₂ <span style="color:var(--vx-text-3)">· optional</span></span><span style="display:flex;align-items:center;height:40px;border:1px solid var(--vx-line);border-radius:7px;background:var(--vx-bg)"><input defaultValue="45,481" style="flex:1;min-width:0;height:100%;border:0;background:transparent;color:var(--vx-text);font:400 15px var(--vx-font-sans);padding:0 12px;outline:none"><span style="padding:0 12px;height:100%;display:flex;align-items:center;border-left:1px solid var(--vx-line-soft);font:400 12px var(--vx-font-mono);color:var(--vx-text-3)">t CO₂</span></span></label>
+          <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:13px;color:var(--vx-text-2)">Turkish carbon price paid</span><span style="display:flex;align-items:center;height:40px;border:1px solid var(--vx-line);border-radius:7px;background:var(--vx-bg)"><input defaultValue="46,670.00" style="flex:1;min-width:0;height:100%;border:0;background:transparent;color:var(--vx-text);font:400 15px var(--vx-font-sans);padding:0 12px;outline:none"><span style="padding:0 12px;height:100%;display:flex;align-items:center;border-left:1px solid var(--vx-line-soft);font:400 12px var(--vx-font-mono);color:var(--vx-text-3)">€</span></span></label>
+        </div>
+        <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:13px;color:var(--vx-text-2)">Declared process change <span style="color:var(--vx-text-3)">· optional</span></span><textarea placeholder="e.g. Switched 10% of thermal input from petcoke to biomass from 3 Dec" style="min-height:64px;resize:vertical;border:1px solid var(--vx-line);border-radius:7px;background:var(--vx-bg);color:var(--vx-text);font:400 14px/1.5 var(--vx-font-sans);padding:10px 12px;outline:none"></textarea></label>
+        <div style="display:flex;align-items:center;gap:14px;padding:12px 14px;border:1px dashed var(--vx-line);border-radius:8px;flex-wrap:wrap">
+          <span style="width:30px;height:36px;border:1px solid var(--vx-line);border-radius:3px;display:flex;align-items:flex-end;justify-content:center;font:500 8px/1 var(--vx-font-mono);color:var(--vx-text-3);padding-bottom:4px;box-sizing:border-box">PDF</span>
+          <div style="display:flex;flex-direction:column;gap:3px;flex:1;min-width:200px"><span style="font-size:14px">TR-ETS_receipt_2026-12.pdf</span><span style="font-size:12px;color:var(--vx-text-3)">Evidence for carbon price paid · 214 KB · hashed into the report, kept private</span></div>
+          <button style="height:34px;padding:0 12px;border:1px solid var(--vx-line);border-radius:7px;background:transparent;color:var(--vx-text-2);font:500 13px var(--vx-font-sans);cursor:pointer">Replace</button>
+        </div>
+      </section>
+    </div>
+
+    <aside style="flex:0 1 380px;min-width:300px;display:flex;flex-direction:column;gap:16px;position:sticky;top:20px">
+      <section style="background:var(--vx-surface);border:1px solid var(--vx-line);border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:10px">
+        <span style="font:500 11px/1 var(--vx-font-sans);letter-spacing:0.09em;text-transform:uppercase;color:var(--vx-text-3)">Load scenario</span>
+        <select onChange="{{ pick }}" style="height:40px;border:1px solid var(--vx-line);border-radius:7px;background:var(--vx-bg);color:var(--vx-text);font:500 14px var(--vx-font-sans);padding:0 10px">
+          <option value="honest">Honest month · Anatolia</option>
+          <option value="calcination_floor">Fraud · calcination below chemistry</option>
+          <option value="low_cao">Fraud · low CaO</option>
+          <option value="hidden_fuel">Fraud · hidden fuel</option>
+          <option value="inflated_output">Fraud · inflated output</option>
+          <option value="missing_electricity">Fraud · missing electricity</option>
+          <option value="sudden_drop">Fraud · sudden drop</option>
+        </select>
+        <span style="font-size:12px;color:var(--vx-text-3);line-height:1.45">{{ scenarioNote }}</span>
+      </section>
+      <section style="background:var(--vx-surface);border:1px solid var(--vx-line);border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:12px">
+        <span style="font:500 11px/1 var(--vx-font-sans);letter-spacing:0.09em;text-transform:uppercase;color:var(--vx-text-3)">Derived before checks</span>
+        <div style="display:flex;justify-content:space-between;font-size:14px"><span style="color:var(--vx-text-2)">Clinker ratio</span><span style="font-variant-numeric:tabular-nums">0.930</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:14px"><span style="color:var(--vx-text-2)">Kiln energy</span><span style="font-variant-numeric:tabular-nums">3.45 GJ/t clinker</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:14px"><span style="color:var(--vx-text-2)">Electricity</span><span style="font-variant-numeric:tabular-nums">72 kWh/t cement</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:14px"><span style="color:var(--vx-text-2)">Fields in report</span><span style="font-variant-numeric:tabular-nums">31 · 8 disclosable</span></div>
+      </section>
+      <button style="height:48px;border:0;border-radius:8px;background:var(--vx-accent);color:var(--vx-accent-ink);font:600 15px var(--vx-font-sans);cursor:pointer">Calculate and run checks →</button>
+      <span style="font-size:12px;color:var(--vx-text-3);line-height:1.5">Nothing is signed or sent on-chain at this step. Data stays on the plant's server.</span>
+    </aside>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1440,&quot;height&quot;:1100}}">
+class Component extends DCLogic {
+  state = { fuels: [['Petcoke', '6,326.6'], ['Coal', '2,846.3'], ['Waste tyres', '467.7']], scenario: 'honest' };
+  renderVals() {
+    const notes = {
+      honest: 'Synthetic profile for Anatolia Cement, December 2026. Fuel mix 70% petcoke, 25% coal, 5% waste tyres.',
+      calcination_floor: 'Process CO₂ reported 20% below what the clinker chemistry requires.',
+      low_cao: 'Clinker CaO set to 0.48, outside the Portland range.',
+      hidden_fuel: 'All fuel quantities reduced by 30%.',
+      inflated_output: 'Cement output raised 12% with no extra clinker or additives.',
+      missing_electricity: 'Kiln and grinding electricity halved.',
+      sudden_drop: 'Fuel cut 22% and CaO lowered with no declared process change.',
+    };
+    return {
+      fuels: this.state.fuels.map(([type, t], i) => ({ type, t, remove: () => this.setState(s => ({ fuels: s.fuels.filter((_, j) => j !== i) })) })),
+      addFuel: () => this.setState(s => ({ fuels: [...s.fuels, ['Biomass', '0.0']] })),
+      pick: e => this.setState({ scenario: e.target.value }),
+      scenarioNote: notes[this.state.scenario],
+    };
+  }
+}
+</script>
+</body>
+</html>

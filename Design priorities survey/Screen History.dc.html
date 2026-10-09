@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet><link rel="stylesheet" href="tokens.css"></helmet>
+<div style="min-height:900px;background:var(--vx-bg);color:var(--vx-text);font-family:var(--vx-font-sans)">
+  <dc-import name="TopBar" role="plant" tab="history" plant="Marmara Cement – Kocaeli" hint-size="100%,104px"></dc-import>
+  <main style="max-width:1360px;margin:0 auto;padding:28px 40px 40px;display:flex;flex-direction:column;gap:20px;box-sizing:border-box">
+    <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap">
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <span style="font:500 11px/1 var(--vx-font-sans);letter-spacing:0.09em;text-transform:uppercase;color:var(--vx-text-3)">TR-MAR-03 · January 2025 – December 2026</span>
+        <h1 style="margin:0;font:500 30px/1.15 var(--vx-font-sans);letter-spacing:-0.01em">Emissions intensity history</h1>
+      </div>
+      <div style="display:flex;gap:28px">
+        <div style="display:flex;flex-direction:column;gap:4px"><span style="font-size:12px;color:var(--vx-text-3)">Accepted months</span><span style="font:400 24px/1 var(--vx-font-sans)">20</span></div>
+        <div style="display:flex;flex-direction:column;gap:4px"><span style="font-size:12px;color:var(--vx-text-3)">Blocked</span><span style="font:400 24px/1 var(--vx-font-sans);color:var(--vx-block)">4</span></div>
+        <div style="display:flex;flex-direction:column;gap:4px"><span style="font-size:12px;color:var(--vx-text-3)">Mean, accepted</span><span style="font:400 24px/1 var(--vx-font-sans)">0.886 <span style="font-size:13px;color:var(--vx-text-3)">t CO₂/t</span></span></div>
+      </div>
+    </div>
+
+    <section style="background:var(--vx-surface);border:1px solid var(--vx-line);border-radius:12px;padding:24px 24px 18px;display:flex;flex-direction:column;gap:14px">
+      <div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font-size:12px;color:var(--vx-text-2)">
+        <span style="font:600 15px var(--vx-font-sans);color:var(--vx-text)">t CO₂ per t cement</span>
+        <div style="display:flex;gap:18px;align-items:center">
+          <span style="display:flex;align-items:center;gap:6px"><span style="width:9px;height:9px;border-radius:50%;background:var(--vx-accent)"></span>Accepted</span>
+          <span style="display:flex;align-items:center;gap:6px"><span style="width:11px;height:11px;border-radius:2px;background:var(--vx-block);color:var(--vx-on-status);font-size:8px;font-weight:700;display:flex;align-items:center;justify-content:center">✕</span>Blocked · value as reported</span>
+          <span style="display:flex;align-items:center;gap:6px"><span style="width:9px;height:9px;border-radius:50%;box-sizing:border-box;border:2px solid var(--vx-accent)"></span>Live month</span>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:44px minmax(0,1fr);gap:8px">
+        <div style="display:flex;flex-direction:column;justify-content:space-between;height:300px;font:400 11px var(--vx-font-mono);color:var(--vx-text-3);text-align:right"><span>0.95</span><span>0.85</span><span>0.75</span><span>0.65</span></div>
+        <div style="position:relative;height:300px;border-bottom:1px solid var(--vx-line);background:linear-gradient(var(--vx-line-soft) 1px,transparent 1px) 0 0/100% 33.333%">
+          <div style="position:absolute;left:0;right:0;bottom:{{ benchPos }};border-top:1px dashed var(--vx-text-3)"><span style="position:absolute;right:0;top:-18px;font-size:11px;color:var(--vx-text-3)">mean 0.886</span></div>
+          <div style="position:absolute;inset:0;display:grid;grid-template-columns:repeat(24,minmax(0,1fr))">
+            <sc-for list="{{ months }}" as="m" hint-placeholder-count="24">
+              <div style="position:relative;background:{{ m.colBg }}" title="{{ m.tip }}">
+                <sc-if value="{{ m.ok }}"><span style="position:absolute;left:50%;bottom:{{ m.pos }};width:9px;height:9px;margin:0 0 -4.5px -4.5px;border-radius:50%;background:var(--vx-accent)"></span></sc-if>
+                <sc-if value="{{ m.live }}"><span style="position:absolute;left:50%;bottom:{{ m.pos }};width:13px;height:13px;margin:0 0 -6.5px -6.5px;box-sizing:border-box;border-radius:50%;border:2.5px solid var(--vx-accent);background:var(--vx-surface)"></span></sc-if>
+                <sc-if value="{{ m.blocked }}"><span style="position:absolute;left:50%;bottom:{{ m.pos }};width:15px;height:15px;margin:0 0 -7.5px -7.5px;border-radius:2px;background:var(--vx-block);color:var(--vx-on-status);font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center">✕</span><span style="position:absolute;left:50%;bottom:{{ m.labelPos }};transform:translateX(-50%);font:500 11px var(--vx-font-mono);color:var(--vx-block)">{{ m.v }}</span></sc-if>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+        <span></span>
+        <div style="display:grid;grid-template-columns:repeat(24,minmax(0,1fr));font:400 11px var(--vx-font-mono);color:var(--vx-text-3);text-align:center">
+          <sc-for list="{{ months }}" as="m" hint-placeholder-count="24"><span>{{ m.label }}</span></sc-for>
+        </div>
+        <span></span>
+        <div style="display:grid;grid-template-columns:1fr 1fr;font-size:12px;color:var(--vx-text-2)"><span style="border-left:1px solid var(--vx-line);padding-left:6px">2025</span><span style="border-left:1px solid var(--vx-line);padding-left:6px">2026</span></div>
+      </div>
+    </section>
+
+    <section style="background:var(--vx-surface);border:1px solid var(--vx-line);border-radius:12px;overflow:hidden">
+      <div style="padding:18px 22px 12px;font:600 16px/1.3 var(--vx-font-sans)">Blocked months <span style="font-weight:400;color:var(--vx-text-3);font-size:13px">· returned to plant, never signed or anchored</span></div>
+      <sc-for list="{{ blockedRows }}" as="b" hint-placeholder-count="4">
+        <div style="display:grid;grid-template-columns:110px 120px minmax(0,1fr) 150px 150px;gap:16px;align-items:center;padding:12px 22px;border-top:1px solid var(--vx-line-soft)">
+          <span style="font:500 13px var(--vx-font-mono)">{{ b.period }}</span>
+          <dc-import name="Pill" status="block" hint-size="90px,24px"></dc-import>
+          <span style="font-size:14px">{{ b.rule }} <span style="color:var(--vx-text-3)">· {{ b.reason }}</span></span>
+          <span style="font:400 12px var(--vx-font-mono);color:var(--vx-text-2)">{{ b.expected }}</span>
+          <span style="font:500 12px var(--vx-font-mono);color:var(--vx-block)">{{ b.reported }}</span>
+        </div>
+      </sc-for>
+    </section>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1440,&quot;height&quot;:960}}">
+class Component extends DCLogic {
+  renderVals() {
+    const noise = [3, -2, 4, -1, 1, -3, 2, 0, -2, 3, 1, -1, 2, -3, 0, 4, -2, 1, 0, -1, 0, 0, 0, 0];
+    const blocked = { 18: 0.791, 20: 0.744, 21: 0.702, 22: 0.803 };
+    const L = 'JFMAMJJASOND';
+    const pos = v => ((v - 0.65) / 0.30 * 100).toFixed(2) + '%';
+    const months = noise.map((n, m) => {
+      const v = m === 23 ? 0.886 : blocked[m] ?? (0.886 - 0.006 * Math.sin(2 * Math.PI * (m - 3) / 12) + n * 0.002);
+      const b = m in blocked;
+      return {
+        label: L[m % 12], v: v.toFixed(3), pos: pos(v), labelPos: 'calc(' + pos(v) + ' + 14px)',
+        ok: !b && m !== 23, live: m === 23, blocked: b,
+        colBg: b ? 'repeating-linear-gradient(135deg, var(--vx-block-bg) 0 4px, transparent 4px 8px)' : 'transparent',
+        tip: `${2025 + Math.floor(m / 12)}-${String(m % 12 + 1).padStart(2, '0')} · ${v.toFixed(3)} t CO₂/t${b ? ' · blocked' : ''}`,
+      };
+    });
+    return {
+      months, benchPos: pos(0.886),
+      blockedRows: [
+        { period: '2026-07', rule: 'Calcination floor', reason: 'process CO₂ below chemical minimum', expected: '≥ 53,180 t CO₂', reported: '43,410 t CO₂' },
+        { period: '2026-09', rule: 'Clinker oxide content', reason: 'CaO outside Portland range', expected: '0.60–0.69', reported: '0.48' },
+        { period: '2026-10', rule: 'Kiln energy per tonne', reason: 'fuel may be missing', expected: '2.9–4.5 GJ/t', reported: '2.59 GJ/t' },
+        { period: '2026-11', rule: 'Mass balance', reason: 'output exceeds clinker + additives', expected: '≤ 121,370 t', reported: '131,960 t' },
+      ],
+    };
+  }
+}
+</script>
+</body>
+</html>

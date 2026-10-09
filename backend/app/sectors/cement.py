@@ -94,5 +94,8 @@ class CementSector:
                 "grinding_electricity_tco2": round(grinding_indirect, 2),
                 "clinker_ratio": round(ratio, 4),
                 "clinker_see_direct": round(clk_direct_per_t, 4),
+                "kiln_gj_per_t_clk": round(self.kiln_energy_gj(x) / x.clinker_produced_t, 3),
+                "kwh_per_t_cem": round((x.electricity_kiln_mwh + x.electricity_grinding_mwh) * 1000
+                                       / x.cement_produced_t, 1),
             },
         )
