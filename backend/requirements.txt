@@ -1,0 +1,15 @@
+cryptography==50.0.2
+fastapi==0.143.0
+httpx==0.28.1
+liboqs-python==0.16.0.1
+numpy==2.5.3
+pandas==3.0.6
+pydantic==2.14.0
+pytest==9.1.1
+python-dotenv==1.2.4
+PyYAML==6.0.3
+rfc8785==0.1.4
+scikit-learn==1.9.1
+shap==0.53.0
+uvicorn==0.54.0
+web3==8.0.0

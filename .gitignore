@@ -1,0 +1,23 @@
+.env
+.DS_Store
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+*.db
+backend/keys/
+
+# Node
+node_modules/
+.next/
+contracts/artifacts/
+contracts/cache/
+contracts/typechain-types/
+contracts/coverage/
+contracts/deployments/localhost.json
+contracts/deployments/hardhat.json
+
+# Planning docs
+*.docx

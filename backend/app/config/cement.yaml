@@ -1,0 +1,69 @@
+# Cement sector configuration.
+# Every number used by the emissions engine and plausibility guard lives here,
+# so factors can be corrected without touching code.
+# Entries marked `verify: true` must be checked against the EU CBAM implementing
+# rules (Implementing Regulation (EU) 2025/2621 and its annexes) before submission.
+
+sector: cement
+product:
+  cn_code: "2523 29 00"
+  name: Portland cement (grey)
+precursor:
+  cn_code: "2523 10 00"
+  name: Cement clinker (grey)
+
+calcination:
+  # Stoichiometric CO2 released per tonne of oxide in clinker (CaCO3 -> CaO + CO2, MgCO3 -> MgO + CO2).
+  # 44.01/56.08 = 0.785, 44.01/40.30 = 1.092
+  factor_cao: 0.785
+  factor_mgo: 1.092
+  source: "EU MRR (Reg. 2018/2066) Annex II/IV calcination output method; molar masses"
+
+# Fuel defaults. NCV in GJ/t, EF in t CO2/TJ, biomass_fraction is zero-rated.
+fuels:
+  petcoke:      { ncv: 32.5, ef: 97.5,  biomass_fraction: 0.0, source: "IPCC 2006 Vol.2 Tab.1.2/1.4" }
+  coal:         { ncv: 25.8, ef: 94.6,  biomass_fraction: 0.0, source: "IPCC 2006 other bituminous coal" }
+  lignite:      { ncv: 11.9, ef: 101.0, biomass_fraction: 0.0, source: "IPCC 2006" }
+  natural_gas:  { ncv: 48.0, ef: 56.1,  biomass_fraction: 0.0, source: "IPCC 2006" }
+  fuel_oil:     { ncv: 40.4, ef: 77.4,  biomass_fraction: 0.0, source: "IPCC 2006 residual fuel oil" }
+  waste_tyres:  { ncv: 31.4, ef: 85.0,  biomass_fraction: 0.27, source: "IPCC 2006 / WBCSD CSI", verify: true }
+  biomass:      { ncv: 15.6, ef: 112.0, biomass_fraction: 1.0, source: "IPCC 2006 wood waste" }
+
+electricity:
+  # Turkish grid emission factor, t CO2/MWh.
+  grid_ef_tco2_per_mwh: 0.442
+  source: "Turkey national grid factor (MENR / IEA), CBAM default for indirect emissions"
+  verify: true
+
+defaults:
+  # EU default values for "other countries and territories" (Turkey has no country-specific value).
+  # Sources disagree between 1.551 and 1.584; 1.584 is reported as the 2026 value incl. mark-up.
+  see_total_tco2_per_t: 1.584
+  source: "Implementing Regulation (EU) 2025/2621 Annex; Argus Media 2026"
+  verify: true
+
+benchmark:
+  # Direct-emissions benchmark used for the free-allocation adjustment of the CBAM obligation.
+  # 0.83 is the clinker benchmark; the cement value is derived via a default clinker ratio.
+  clinker_tco2_per_t: 0.83
+  default_clinker_ratio: 0.85
+  source: "Implementing Regulation (EU) 2025/2621"
+  verify: true
+
+# Plausibility guard thresholds (approximate, tune on data).
+guard:
+  clinker_cao_range: [0.60, 0.69]          # mass fraction of CaO in Portland clinker
+  clinker_mgo_range: [0.005, 0.05]
+  calcination_tolerance: 0.02              # reported process CO2 may sit at most 2% below the floor
+  kiln_energy_gj_per_t_clk: [2.9, 4.5]     # dry-process kilns with preheater/precalciner
+  clinker_ratio_by_type:
+    CEM_I:    [0.90, 0.97]
+    CEM_II_A: [0.80, 0.94]
+    CEM_II_B: [0.65, 0.79]
+    CEM_III_A: [0.35, 0.64]
+  mass_balance_tolerance: 0.03             # cement vs clinker consumed + additives
+  electricity_sigma: 3.0                   # band = historical mean ± sigma * std
+  electricity_kwh_per_t_cem_fallback: [50, 140]
+  electricity_min_history: 12               # months needed before switching to the plant's own band
+  sudden_drop_threshold: 0.15              # >15% month-on-month intensity drop without declared change
+  anomaly_contamination: 0.03
