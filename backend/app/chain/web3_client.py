@@ -6,6 +6,7 @@ registry owner and demo plant operator; a second wallet acts as the accredited v
 
 import json
 import os
+import threading
 import time
 from pathlib import Path
 
@@ -45,6 +46,12 @@ class Web3Chain:
         self.verifier = self.w3.eth.account.from_key(os.environ["VERIFIER_PRIVATE_KEY"])
         self.explorer = os.environ.get("EXPLORER_TX_URL", "")
         self.deploy_block = dep.get("deployBlock", 0)
+        # Event scan window: by default this run's events (from ~1 h before startup), because a full
+        # scan from deployment is hundreds of capped get_logs calls. EVENTS_FROM_BLOCK overrides it.
+        start = os.environ.get("EVENTS_FROM_BLOCK")
+        self._scanned_to = (int(start) if start else max(self.deploy_block, self.w3.eth.block_number - 1_800)) - 1
+        self._events: list[dict] = []
+        self._events_lock = threading.Lock()
         # Namespace for installation/shipment ids, so rehearsals get fresh on-chain identities
         # without redeploying (the contract allows one report per installation and period).
         self.ns = os.environ.get("CHAIN_NAMESPACE", "")
@@ -67,10 +74,13 @@ class Web3Chain:
             data = e.data.get("data", "") if isinstance(e.data, dict) else str(e.data or "")
             data = data.removeprefix("0x")
             name = self._errors.get(data[:8], "Revert")
-            args = {}
+            args, detail = {}, str(e.message or data)
             if name == "OverAllocation" and len(data) >= 8 + 128:
                 args = {"available_kg": int(data[8:72], 16), "requested_kg": int(data[72:136], 16)}
-            raise ChainError(name, str(e.message or data), args) from e
+                detail = f"available {args['available_kg']} kg, requested {args['requested_kg']} kg"  # as the memory chain
+            elif name != "Revert":
+                detail = ""  # the error name says it; the raw selector adds nothing
+            raise ChainError(name, detail, args) from e
         params = {"from": account.address, "nonce": self.w3.eth.get_transaction_count(account.address)}
         if self.tip_wei is not None:
             base = self.w3.eth.get_block("latest").get("baseFeePerGas", 0)
@@ -134,17 +144,19 @@ class Web3Chain:
             abi = next(e for e in self.contract.abi if e.get("type") == "event" and e["name"] == n)
             sig = f"{n}({','.join(i['type'] for i in abi['inputs'])})"
             by_topic[Web3.keccak(text=sig)] = getattr(self.contract.events, n)()
-        latest, step = self._retry(lambda: self.w3.eth.block_number), 5_000  # public RPCs cap log ranges
-        out = []
-        for a in range(self.deploy_block, latest + 1, step):
-            logs = self._retry(self.w3.eth.get_logs, {
-                "address": self.contract.address, "fromBlock": a, "toBlock": min(a + step - 1, latest)})
-            for log in logs:
-                ev = by_topic.get(bytes(log["topics"][0]))
-                if ev is None:
-                    continue
-                d = ev.process_log(log)
-                out.append({"event": d.event, "block": d.blockNumber,
-                            "tx_hash": "0x" + d.transactionHash.hex().removeprefix("0x"),
-                            **{k: (v.hex() if isinstance(v, bytes) else v) for k, v in d.args.items()}})
-        return sorted(out, key=lambda e: e["block"])
+        with self._events_lock:  # incremental: only blocks not scanned yet, so polling stays cheap
+            latest, step = self._retry(lambda: self.w3.eth.block_number), 5_000  # public RPCs cap log ranges
+            for a in range(self._scanned_to + 1, latest + 1, step):
+                b = min(a + step - 1, latest)
+                logs = self._retry(self.w3.eth.get_logs, {
+                    "address": self.contract.address, "fromBlock": a, "toBlock": b})
+                for log in logs:
+                    ev = by_topic.get(bytes(log["topics"][0]))
+                    if ev is None:
+                        continue
+                    d = ev.process_log(log)
+                    self._events.append({"event": d.event, "block": d.blockNumber,
+                                         "tx_hash": "0x" + d.transactionHash.hex().removeprefix("0x"),
+                                         **{k: (v.hex() if isinstance(v, bytes) else v) for k, v in d.args.items()}})
+                self._scanned_to = b
+            return sorted(self._events, key=lambda e: e["block"])

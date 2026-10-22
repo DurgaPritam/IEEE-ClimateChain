@@ -114,7 +114,7 @@ export interface Importer {
 }
 
 export interface Info {
-  chain: { backend: string; label: string; address: string | null; explorer: string | null };
+  chain: { backend: string; label: string; address: string | null; explorer: string | null; rpc_url: string | null; namespace: string };
   verifier: { name: string; key_fingerprint: string };
   live_period: string;
   importers: Importer[];

@@ -75,3 +75,10 @@ def test_audit_trail_keeps_what_was_refused(client):
     stats = audit["stats"]
     assert stats["double_count_attempts_blocked"] >= 1 and stats["blocked_submissions"] >= 1
     assert stats["allocated_tco2_default"] > stats["allocated_tco2_verified"] > 0
+
+
+@pytest.mark.parametrize("period", ["2026-6", "2026-13", "26-06", "2026-06 "])
+def test_period_has_one_spelling(client, period):
+    sc = client.get(f"/api/demo/scenarios/{PLANT}").json()
+    res = client.post(f"/api/plants/{PLANT}/reports", json={**sc, "period": period})
+    assert res.status_code == 400 and res.json()["code"] == "invalid"

@@ -1,9 +1,10 @@
 "use client";
 import Link from "next/link";
-import { use, useMemo } from "react";
+import { use, useMemo, useState } from "react";
 import { api } from "@/lib/api";
 import { num } from "@/lib/format";
 import { useAsync } from "@/lib/useAsync";
+import { checkOnChain } from "@/lib/onchain";
 import { hybridKeyFingerprint, verifyPackage } from "@/lib/verify";
 import { useApp } from "@/components/shell/AppState";
 import { Hash } from "@/components/ui/Hash";
@@ -18,8 +19,22 @@ const FIELD_LABELS: Record<string, string> = {
 export default function DisclosurePage({ params }: { params: Promise<{ shipment: string }> }) {
   const { shipment } = use(params);
   const { info } = useApp();
-  const { data: pkg, error } = useAsync(() => api.disclosure(shipment), [shipment]);
-  const check = useMemo(() => (pkg ? verifyPackage(pkg) : null), [pkg]);
+  const { data: original, error } = useAsync(() => api.disclosure(shipment), [shipment]);
+  // Tamper demo: lower the disclosed intensity by 20%, as a compromised server or proxy might,
+  // and let the browser's own checks catch it. Nothing is sent anywhere.
+  const [tampered, setTampered] = useState(false);
+  const pkg = useMemo(() => original && (tampered ? {
+    ...original,
+    disclosures: original.disclosures.map((d) =>
+      d.field === "see_total" ? { ...d, value: Math.round(Number(d.value) * 0.8 * 10_000) / 10_000 } : d),
+  } : original), [original, tampered]);
+  const local = useMemo(() => (pkg ? verifyPackage(pkg) : null), [pkg]);
+  // On a real chain the browser also reads the registry itself; offline there is no chain to read.
+  const rpc = info?.chain.rpc_url, registry = info?.chain.address;
+  const { data: chain, error: chainError } = useAsync(
+    async () => (pkg && rpc && registry ? checkOnChain(rpc, registry, pkg, info?.chain.namespace) : null),
+    [pkg, rpc, registry, info?.chain.namespace]);
+  const check = local && { ...local, valid: local.valid && (!rpc || !registry || chain?.valid === true) };
 
   if (error) return <Page><Empty title="Disclosure link not found">Shipment {shipment} has no allocation.</Empty></Page>;
   if (!pkg || !check) return <Page><span className="text-ink-3">Loading and verifying…</span></Page>;
@@ -31,6 +46,13 @@ export default function DisclosurePage({ params }: { params: Promise<{ shipment:
     { title: "Report hash", sub: "Recomputed from the signed header (RFC 8785)", ok: check.reportHash, hash: pkg.report_hash },
     { title: "Plant signature · ML-DSA-65 + ECDSA P-256", sub: `Both components verify · key matches header · ${pkg.header.plant_id}`, ok: check.plant.valid && check.plant.keyMatchesHeader, hash: String(pkg.header.plant_key_fingerprint) },
     { title: "Verifier signature · ML-DSA-65 + ECDSA P-256", sub: `${info?.verifier.name ?? "Accredited verifier"} · allow-listed, not the operator`, ok: check.verifier.valid, hash: hybridKeyFingerprint(pkg.verifier_signature) },
+    ...(rpc && registry ? [{
+      title: "On-chain record · read by your browser from the registry",
+      sub: chainError ? `Could not reach ${new URL(rpc).host}`
+        : !chain ? `Reading ${new URL(rpc).host}…`
+          : `Status ${chain.status} · Merkle root ${chain.rootMatches ? "matches" : "DIFFERS"} · plant key ${chain.plantKeyMatches ? "matches" : "DIFFERS"} · verifier key ${chain.verifierKeyMatches ? "matches" : "DIFFERS"} · shipment ${chain.shipmentRecorded ? "recorded" : "NOT recorded"} · ${num(Number(chain.allocatedKg) / 1000)} of ${num(Number(chain.verifiedKg) / 1000)} t allocated`,
+      ok: chain?.valid === true, hash: registry, explorer: true, kind: "address" as const,
+    }] : []),
     ...(["anchor", "cosign", "allocation"] as const).filter((k) => pkg.receipts[k]).map((k) => ({
       title: `On-chain receipt · ${k === "anchor" ? "anchorReport" : k === "cosign" ? "coSign" : "allocate"}`,
       sub: `Block #${pkg.receipts[k].block != null ? num(pkg.receipts[k].block as number) : "—"}${k === "allocation" ? ` · ${num(pkg.tonnes)} t to this shipment` : ""}`,
@@ -74,7 +96,12 @@ export default function DisclosurePage({ params }: { params: Promise<{ shipment:
         <section className="vx-card min-w-0 flex-[1.4_1_560px] overflow-hidden">
           <div className="flex flex-wrap justify-between gap-3 px-[22px] pb-3.5 pt-5">
             <span className="text-h3">Verification checklist</span>
-            <span className="text-[12px] text-ink-3">Checked locally · nothing to trust on this server</span>
+            <span className="flex items-center gap-3 text-[12px] text-ink-3">
+              Checked locally · nothing to trust on this server
+              <button onClick={() => setTampered((t) => !t)} className="vx-btn-ghost h-[28px] px-2.5 text-[12px]" aria-pressed={tampered}>
+                {tampered ? "Restore original package" : "Simulate tampering (−20% intensity)"}
+              </button>
+            </span>
           </div>
           {rows.map((c) => (
             <div key={c.title} className="grid grid-cols-[28px_minmax(0,1fr)] items-center gap-3.5 border-t border-line-soft px-[22px] py-3.5 md:grid-cols-[28px_minmax(0,1fr)_auto]">
@@ -83,9 +110,9 @@ export default function DisclosurePage({ params }: { params: Promise<{ shipment:
                 : <span className="flex h-[22px] w-[22px] items-center justify-center rounded-[3px] bg-block text-[11px] font-bold text-on-status">✕</span>}
               <div className="flex min-w-0 flex-col gap-[3px]">
                 <span className="text-[14px] font-medium leading-[1.3]">{c.title}</span>
-                <span className="text-small text-ink-3">{c.sub}{"chain" in c ? " · from the chain, not re-verified here" : ""}</span>
+                <span className="text-small text-ink-3">{c.sub}{"chain" in c ? (rpc ? " · receipt as reported by the server" : " · offline demo chain, not re-verified here") : ""}</span>
               </div>
-              {c.hash && <div className="col-start-2 md:col-start-auto"><Hash value={c.hash} explorer={"explorer" in c} /></div>}
+              {c.hash && <div className="col-start-2 md:col-start-auto"><Hash value={c.hash} explorer={"explorer" in c} kind={"kind" in c ? c.kind : "tx"} /></div>}
             </div>
           ))}
           <div className="flex flex-col gap-2.5 border-t border-line-soft px-[22px] pb-[18px] pt-3.5">

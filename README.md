@@ -36,7 +36,7 @@ make web                     # web app -> http://localhost:3000 (second terminal
 
 `make demo` runs both on the offline in-memory chain. To run on Polygon Amoy instead, fill in `.env` (see below) and run `make api` with `CHAIN_BACKEND=web3`.
 
-By default the backend uses an in-memory chain that enforces the same rules as the contract. To use a real chain, copy `.env.example` to `.env`, then:
+By default the backend uses an in-memory chain. It mirrors the contract's report, period, shipment and over-allocation rules; access control (owner, operator, verifier ≠ operator) is enforced only by the real contract. To use a real chain, copy `.env.example` to `.env`, then:
 
 ```bash
 make node & make deploy-local        # local Hardhat chain
@@ -133,7 +133,7 @@ Read these numbers with care. The data is synthetic, and the fraud types were wr
 - **ECDSA P-256 / SHA-256** through `cryptography`.
 - **Hybrid rule:** a signature is valid only if *both* components verify and both are present, so it stays secure if either scheme is broken. Signatures are domain-separated (`VERDANT-X/report-signature/v1`).
 - **Why post-quantum now:** CBAM declarations underpin financial and legal claims that are audited years later.
-- **What is signed:** the canonical JSON (RFC 8785) report header: schema, plant, period, product tonnes, Merkle root, and the plant key fingerprint.
+- **What is signed:** the canonical JSON (RFC 8785) report header: schema, plant, period, sector, product tonnes, Merkle root, and the plant key fingerprint.
 - **Merkle commitment:** salted leaves `H(0x00‖salt‖jcs({k,v}))` and internal nodes `H(0x01‖l‖r)`.
 - **Off-chain verification:** PQ signatures are verified off-chain. On-chain ML-DSA verification is too expensive today, so the chain stores only fingerprints.
 - **Key handling:** demo keys are generated in memory at startup. In production they belong in an HSM or KMS, one per installation and per verifier.
@@ -145,6 +145,10 @@ The disclosure page does not trust the VERDANT-X server. `frontend/lib/verify.ts
 - **both** hybrid signatures: ML-DSA-65 (FIPS 204) and ECDSA P-256
 - the plant key fingerprint against the header
 - every disclosed field's Merkle proof
+
+On a real chain, `frontend/lib/onchain.ts` then reads the registry **directly from a public RPC**. It checks that the report is `Verified`, that the on-chain Merkle root, plant key and verifier key match the package, and that this shipment is recorded. A server that invents a self-consistent package with its own keys fails this check. The importer should compare the registry address shown on the page with the published one: [`0xdA8D…4230`](https://amoy.polygonscan.com/address/0xdA8D576790524F96Ee6DFC5365C8aF6Be33d4230#code).
+
+The page has a **Simulate tampering** button. It lowers the disclosed intensity by 20% in the browser, and the Merkle check fails at once.
 
 The backend signs with liboqs and `cryptography`, and the browser verifies with `@noble/post-quantum` and `@noble/curves`. These are independent implementations, so they double as a cross-check of the standards. Changing one disclosed value or one header byte makes the verification fail.
 

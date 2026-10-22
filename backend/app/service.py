@@ -5,6 +5,7 @@ submit -> guard -> plant hybrid-signs + anchors -> verifier co-signs -> allocate
 
 import base64
 import os
+import re
 from typing import Any
 
 from pydantic import BaseModel
@@ -95,6 +96,9 @@ class VerdantService:
         return get_sector(r.sector).inputs_model(**r.inputs)
 
     def submit(self, plant_id: str, period: str, inputs: dict[str, Any]) -> Report:
+        # One canonical spelling per month: the contract's one-report-per-period rule keys on this string.
+        if not re.fullmatch(r"\d{4}-(0[1-9]|1[0-2])", period):
+            raise ServiceError("Period must be YYYY-MM, for example 2026-06.", "invalid")
         plant = self._plant(plant_id)
         sector = get_sector(plant.sector)
         x = sector.inputs_model(**inputs)

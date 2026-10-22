@@ -1,5 +1,6 @@
 """HTTP API. Thin layer over VerdantService; grouped by role."""
 
+import os
 from typing import Any
 
 from fastapi import APIRouter, Depends, Request
@@ -44,11 +45,15 @@ def health(s: VerdantService = Depends(svc)):
 @router.get("/info")
 def info(s: VerdantService = Depends(svc)):
     """Static facts the UI shows: chain, contract, verifier and live period."""
-    chain = {"backend": s.chain.name, "label": "In-memory chain (offline)", "address": None, "explorer": None}
+    chain = {"backend": s.chain.name, "label": "In-memory chain (offline)", "address": None, "explorer": None,
+             "rpc_url": None, "namespace": ""}
     if s.chain.name == "web3":
         net = getattr(s.chain, "network", "")
         chain |= {"label": {"amoy": "Polygon Amoy testnet", "sepolia": "Sepolia testnet"}.get(net, "Local chain"),
-                  "address": s.chain.address, "explorer": getattr(s.chain, "explorer", None)}
+                  "address": s.chain.address, "explorer": getattr(s.chain, "explorer", None),
+                  # public RPC for the importer's browser to read the registry itself
+                  "rpc_url": os.environ.get(f"{net.upper()}_RPC_URL") or None,
+                  "namespace": getattr(s.chain, "ns", "")}  # prefix of on-chain installation/shipment ids
     return {"chain": chain, "verifier": {"name": demo.VERIFIER_NAME, "key_fingerprint": s.verifier_key.key_fingerprint},
             "live_period": demo.LIVE_PERIOD, "importers": demo.IMPORTERS}
 
