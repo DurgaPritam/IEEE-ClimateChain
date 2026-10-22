@@ -82,7 +82,7 @@ def _month(p: PlantProfile, m: int, rng: random.Random, fraud: str | None) -> Ce
         electricity_kiln_mwh=round(kiln_mwh, 1), electricity_grinding_mwh=round(grind_mwh, 1),
         reported_process_co2_t=round(process_co2, 1) if process_co2 else None,
         declared_process_change=note,
-        carbon_price_paid_eur=round(clk * 0.8 * 4.0, 2),  # placeholder Turkish ETS price paid
+        carbon_price_paid_eur=0.0,  # Türkiye ETS has no allowance price in 2026 (see pricing.yaml)
     )
 
 

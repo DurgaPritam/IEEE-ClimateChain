@@ -11,7 +11,7 @@ module.exports = {
     amoy: { url: AMOY_RPC_URL || "https://polygon-amoy-bor-rpc.publicnode.com", accounts, chainId: 80002, gasPrice: 30_000_000_000 },
     sepolia: { url: SEPOLIA_RPC_URL || "https://rpc.sepolia.org", accounts, chainId: 11155111 },
   },
-  etherscan: {
-    apiKey: { polygonAmoy: POLYGONSCAN_API_KEY || "", sepolia: ETHERSCAN_API_KEY || "" },
-  },
+  // Etherscan API V2: one key covers every supported chain, Polygon Amoy included.
+  etherscan: { apiKey: ETHERSCAN_API_KEY || POLYGONSCAN_API_KEY || "" },
+  sourcify: { enabled: false },
 };

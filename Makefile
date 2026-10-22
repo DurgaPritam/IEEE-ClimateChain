@@ -1,6 +1,6 @@
 PY := backend/.venv/bin
 
-.PHONY: setup test test-backend test-contracts api web demo node deploy-local deploy-amoy
+.PHONY: setup test test-backend test-contracts eval api web demo node deploy-local deploy-amoy
 
 setup:            ## install everything (needs liboqs: `brew install liboqs`)
 	python3.12 -m venv backend/.venv
@@ -15,6 +15,9 @@ test-backend:
 
 test-contracts:
 	cd contracts && npx hardhat test
+
+eval:             ## guard detection rates on synthetic frauds
+	cd backend && .venv/bin/python scripts/evaluate_guard.py
 
 api:              ## seeded demo API on http://localhost:8000/docs
 	cd backend && .venv/bin/uvicorn app.main:app --reload --port 8000

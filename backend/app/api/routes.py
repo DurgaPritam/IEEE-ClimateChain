@@ -124,13 +124,16 @@ def verify(package: DisclosurePackage):
 
 
 @router.get("/cost/schedule", tags=["importer"])
-def cost_schedule(tonnes: float, see: float, sector: str = "cement", carbon_paid_eur: float = 0):
-    return schedule(sector, tonnes, see, carbon_price_paid_eur=carbon_paid_eur)
+def cost_schedule(tonnes: float, see: float, sector: str = "cement", carbon_paid_eur: float = 0,
+                  clinker_ratio: float | None = None):
+    return schedule(sector, tonnes, see, carbon_price_paid_eur=carbon_paid_eur, precursor_ratio=clinker_ratio)
 
 
 @router.get("/cost", tags=["importer"])
-def cost(tonnes: float, see: float, sector: str = "cement", year: int = 2026, carbon_paid_eur: float = 0):
-    return compare(sector, tonnes, see, year=year, carbon_price_paid_eur=carbon_paid_eur)
+def cost(tonnes: float, see: float, sector: str = "cement", year: int = 2026, carbon_paid_eur: float = 0,
+         clinker_ratio: float | None = None):
+    return compare(sector, tonnes, see, year=year, carbon_price_paid_eur=carbon_paid_eur,
+                   precursor_ratio=clinker_ratio)
 
 
 # ---- regulator ----

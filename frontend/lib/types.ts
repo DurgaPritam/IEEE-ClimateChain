@@ -163,6 +163,7 @@ export interface DisclosurePackage {
   verifier_signature: HybridSignature;
   receipts: Record<string, TxReceipt>;
   cost: CostComparison;
+  cost_schedule: CostComparison[];
   carbon_price_paid_eur: number;
 }
 

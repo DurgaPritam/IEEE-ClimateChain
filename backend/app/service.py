@@ -12,7 +12,7 @@ from pydantic import BaseModel
 from app.chain import ChainClient, ChainError, get_chain
 from app.guard import Guard
 from app.models import Severity
-from app.pricing.cbam_cost import CostComparison, compare
+from app.pricing.cbam_cost import CostComparison, compare, schedule
 from app.sectors import get_sector
 from app.store import Allocation, Plant, Report, ReportStatus, Store
 from app.trust import merkle
@@ -45,6 +45,7 @@ class DisclosurePackage(BaseModel):
     verifier_signature: hybrid.HybridSignature
     receipts: dict[str, Any]
     cost: CostComparison
+    cost_schedule: list[CostComparison] = []  # every year of the free-allocation phase-out
     carbon_price_paid_eur: float
 
 
@@ -198,6 +199,8 @@ class VerdantService:
         commitment = merkle.MerkleCommitment(leaves, {k: bytes.fromhex(v) for k, v in r.salts.items()})
         assert commitment.root == r.header["merkle_root"]
         carbon_paid = r.inputs.get("carbon_price_paid_eur", 0.0) * a.tonnes / r.result.product_tonnes
+        # The clinker ratio stays private: costs are computed here, only the results are disclosed.
+        ratio = r.result.breakdown.get("clinker_ratio")
         return DisclosurePackage(
             shipment_id=shipment_id, importer_id=a.importer_id, tonnes=a.tonnes,
             plant_name=self.store.plants[r.plant_id].name,
@@ -207,7 +210,10 @@ class VerdantService:
             disclosures=[commitment.disclose(f) for f in DISCLOSED_FIELDS],
             plant_signature=r.plant_signature, verifier_signature=r.verifier_signature,
             receipts={**{k: v.model_dump() for k, v in r.receipts.items()}, "allocation": a.receipt.model_dump()},
-            cost=compare(r.sector, a.tonnes, r.result.see_total, year=year, carbon_price_paid_eur=carbon_paid),
+            cost=compare(r.sector, a.tonnes, r.result.see_total, year=year, carbon_price_paid_eur=carbon_paid,
+                         precursor_ratio=ratio),
+            cost_schedule=schedule(r.sector, a.tonnes, r.result.see_total, carbon_price_paid_eur=carbon_paid,
+                                   precursor_ratio=ratio),
             carbon_price_paid_eur=round(carbon_paid, 2),
         )
 

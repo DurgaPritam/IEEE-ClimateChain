@@ -36,19 +36,20 @@ electricity:
   verify: true
 
 defaults:
-  # EU default values for "other countries and territories" (Turkey has no country-specific value).
-  # Sources disagree between 1.551 and 1.584; 1.584 is reported as the 2026 value incl. mark-up.
-  see_total_tco2_per_t: 1.584
-  source: "Implementing Regulation (EU) 2025/2621 Annex; Argus Media 2026"
-  verify: true
+  # EU default values for "other countries and territories" (Türkiye has no country-specific value).
+  # Grey cement 2523 29 00: 1.360 direct + 0.080 indirect = 1.440 total, plus the 10% mark-up for 2026
+  # (20% in 2027, 30% from 2028). The often-quoted 1.551 is grey clinker (1.410 × 1.10), not cement.
+  see_total_tco2_per_t: 1.440           # before mark-up
+  markup_by_year: { 2026: 0.10, 2027: 0.20, 2028: 0.30 }   # later years keep the 2028 mark-up
+  source: "IR (EU) 2025/2621 as corrected by IR (EU) 2026/1740; DG TAXUD default values, 6 Aug 2026"
 
 benchmark:
-  # Direct-emissions benchmark used for the free-allocation adjustment of the CBAM obligation.
-  # 0.83 is the clinker benchmark; the cement value is derived via a default clinker ratio.
-  clinker_tco2_per_t: 0.83
-  default_clinker_ratio: 0.85
-  source: "Implementing Regulation (EU) 2025/2621"
-  verify: true
+  # CBAM benchmarks for the free-allocation adjustment. Grey cement has no benchmark of its own for
+  # actual data (column A = 0); it is applied through the clinker precursor: 0.666 × clinker ratio.
+  # When default values are used (column B), grey cement carries 0.666 per tonne of cement.
+  clinker_tco2_per_t: 0.666
+  cement_default_values_tco2_per_t: 0.666
+  source: "IR (EU) 2025/2620; DG TAXUD CBAM Benchmarks, 6 Feb 2026"
 
 # Plausibility guard thresholds (approximate, tune on data).
 guard:

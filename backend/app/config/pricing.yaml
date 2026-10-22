@@ -1,7 +1,7 @@
 # CBAM certificate pricing assumptions. All simplified; see README "Limitations".
 
-certificate_price_eur: 75.0       # EUR per t CO2; 2026 price = quarterly average of EU ETS auctions
-certificate_price_source: "EU ETS auction average, 2026 (assumption, update before demo)"
+certificate_price_eur: 77.65      # EUR per t CO2; mean of the official 2026 quarterly prices so far
+certificate_price_source: "DG TAXUD CBAM certificate price 2026: Q1 75.36, Q2 75.28, Q3 82.32 (Q4 due Jan 2027)"
 
 # Share of free allocation still granted to EU producers; the CBAM obligation is reduced
 # by benchmark * this factor. Phase-out per Regulation (EU) 2023/956 Art. 31.
@@ -17,6 +17,7 @@ free_allocation_factor_by_year:
   2033: 0.14
   2034: 0.0
 
-# Carbon price effectively paid in the country of origin (Turkish ETS) is deductible,
-# if documented and linked to the goods. Exact rules depend on EU implementing acts.
+# Carbon price effectively paid in the country of origin is deductible, if documented and linked
+# to the goods. Türkiye's ETS pilot (2026-27) is reporting-only in 2026 with 100% free allocation
+# and no allowance price yet, so the deduction is zero for 2026 imports.
 carbon_price_deduction_simplified: true

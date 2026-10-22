@@ -1,6 +1,6 @@
 "use client";
 // CBAM cost: default values vs verified. Three layouts from the design (a ledger, b hero, c over time).
-// Every number comes from the backend pricing module (/api/cost/schedule); nothing is computed here.
+// Every number comes from the backend pricing module (disclosure package cost_schedule); nothing is computed here.
 import Link from "next/link";
 import { use, useEffect, useState } from "react";
 import { api } from "@/lib/api";
@@ -21,8 +21,7 @@ export default function CostPage({ params }: { params: Promise<{ shipment: strin
   const { data, error } = useAsync(async () => {
     const pkg = await api.disclosure(shipment);
     const see = Number(pkg.disclosures.find((d) => d.field === "see_total")?.value);
-    const schedule = await api.costSchedule(pkg.tonnes, see, pkg.carbon_price_paid_eur);
-    return { pkg, see, schedule };
+    return { pkg, see, schedule: pkg.cost_schedule };
   }, [shipment]);
 
   useEffect(() => {
@@ -37,7 +36,6 @@ export default function CostPage({ params }: { params: Promise<{ shipment: strin
   const c = schedule.find((s) => s.year === year) ?? schedule[0];
   const importer = info?.importers.find((i) => i.id === pkg.importer_id);
   const pct = c.default.net_cost_eur > 0 ? Math.round((c.saving_eur / c.default.net_cost_eur) * 100) : 0;
-  const fa = c.default.benchmark_deduction_tco2_per_t;
 
   return (
     <Page className="flex min-h-[calc(100vh-70px)] flex-col gap-6">
@@ -61,15 +59,15 @@ export default function CostPage({ params }: { params: Promise<{ shipment: strin
         }
       />
 
-      {variant === "a" && <Ledger c={c} see={see} fa={fa} pct={pct} tonnes={pkg.tonnes} />}
+      {variant === "a" && <Ledger c={c} see={see} pct={pct} tonnes={pkg.tonnes} />}
       {variant === "b" && <Hero c={c} see={see} tonnes={pkg.tonnes} />}
       {variant === "c" && <OverTime c={c} see={see} schedule={schedule} setYear={setYear} />}
 
       <footer className="mt-auto flex flex-wrap items-center gap-x-6 gap-y-1.5 border-t border-line-soft pt-3.5 text-[12px] leading-normal text-ink-3">
-        <span>Certificate price €{c.certificate_price_eur}/t CO₂ (EU ETS auction average 2026, assumption; held constant)</span>
-        <span>Default value {c.default.see_tco2_per_t} t CO₂/t (EU default value, cement — to verify against IR 2025/2621)</span>
-        <span>Free-allocation deduction {fa.toFixed(3)} t CO₂/t in {year}</span>
-        <span>Turkish carbon price deducted from the verified path only, capped at gross cost (simplified)</span>
+        <span>Certificate price €{c.certificate_price_eur}/t CO₂ (mean of official 2026 CBAM quarterly prices Q1–Q3; held constant)</span>
+        <span>Default value {c.default.see_tco2_per_t} t CO₂/t (grey cement 1.440 plus the {year} mark-up: 10% in 2026, 20% in 2027, 30% from 2028; IR 2025/2621 as corrected by IR 2026/1740)</span>
+        <span>Free-allocation deduction in {year}: {c.default.benchmark_deduction_tco2_per_t.toFixed(3)} t CO₂/t on default values, {c.verified.benchmark_deduction_tco2_per_t.toFixed(3)} on verified data (clinker benchmark × actual clinker ratio)</span>
+        <span>Türkiye ETS has no allowance price in 2026, so no origin carbon price is deducted</span>
         <span className="ml-auto flex items-center gap-2">
           Layout <Segmented options={[{ value: "a", label: "Ledger" }, { value: "b", label: "Hero" }, { value: "c", label: "Over time" }]} value={variant} onChange={pickVariant} />
         </span>
@@ -87,14 +85,14 @@ function Line({ k, v, tone }: { k: string; v: React.ReactNode; tone?: string }) 
   );
 }
 
-function Ledger({ c, see, fa, pct, tonnes }: { c: CostComparison; see: number; fa: number; pct: number; tonnes: number }) {
+function Ledger({ c, see, pct, tonnes }: { c: CostComparison; see: number; pct: number; tonnes: number }) {
   return (
     <>
       <div className="grid grid-cols-[repeat(auto-fit,minmax(380px,1fr))] gap-4">
         <section className="vx-card flex flex-col gap-3 px-6 py-[22px]">
           <div className="flex items-baseline justify-between"><span className="text-h3">EU default values</span><span className="text-[12px] text-ink-3">no supplier data</span></div>
           <Line k="Embedded emissions" v={`${c.default.see_tco2_per_t.toFixed(3)} t CO₂/t`} />
-          <Line k="Free-allocation deduction" v={`− ${fa.toFixed(3)} t CO₂/t`} />
+          <Line k="Free-allocation deduction" v={`− ${c.default.benchmark_deduction_tco2_per_t.toFixed(3)} t CO₂/t`} />
           <Line k="Certificates required" v={`${num(c.default.obligation_tco2)} t CO₂`} />
           <Line k="Turkish carbon price" v="not deductible on this path" tone="text-ink-3" />
           <div className="flex items-baseline justify-between border-t border-line-soft pt-3"><span className="text-[14px]">Net cost</span><span className="text-[44px] font-light leading-none tracking-[-0.02em]">{eur(c.default.net_cost_eur)}</span></div>
@@ -102,7 +100,7 @@ function Ledger({ c, see, fa, pct, tonnes }: { c: CostComparison; see: number; f
         <section className="flex flex-col gap-3 rounded-lg border border-verified bg-surface px-6 py-[22px]">
           <div className="flex items-center justify-between"><span className="text-h3">Verified actual emissions</span><Pill status="verified" /></div>
           <Line k="Embedded emissions" v={`${see.toFixed(3)} t CO₂/t`} />
-          <Line k="Free-allocation deduction" v={`− ${fa.toFixed(3)} t CO₂/t`} />
+          <Line k="Free-allocation deduction" v={`− ${c.verified.benchmark_deduction_tco2_per_t.toFixed(3)} t CO₂/t`} />
           <Line k="Certificates required" v={`${num(c.verified.obligation_tco2)} t CO₂ · ${eur(c.verified.gross_cost_eur)}`} />
           <Line k="Turkish carbon price paid" v={<span className="text-verified">− {eur(c.verified.carbon_price_deduction_eur)}</span>} />
           <div className="flex items-baseline justify-between border-t border-line-soft pt-3"><span className="text-[14px]">Net cost</span><span className="text-[44px] font-light leading-none tracking-[-0.02em]">{eur(c.verified.net_cost_eur)}</span></div>

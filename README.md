@@ -14,6 +14,8 @@ Since 1 January 2026, EU importers of cement owe CBAM certificates for the carbo
 
 > All plant data in this repository is **synthetic**, built from published ranges. No real plant was involved.
 
+**Climate impact.** On EU default values, a cement plant that cuts its emissions pays exactly the same at the border, so each tonne of CO₂ cut is worth €0. With verified data, each tonne cut is worth about €77. VERDANT-X makes that verified data cheap to produce, confidential, and safe from **double counting**. See [docs/CLIMATE_IMPACT.md](docs/CLIMATE_IMPACT.md) for sourced figures and projections.
+
 ## Quick start
 
 ```bash
@@ -47,6 +49,7 @@ backend/app/
   service.py       the end-to-end flow, independent of the web layer
   api/routes.py    HTTP API grouped by role (plant, verifier, importer, regulator, demo)
   data/synthetic.py  3 plants × 24 months with labelled injected frauds
+backend/scripts/   evaluate_guard.py: detection rates on injected frauds (`make eval`)
 contracts/         VerdantRegistry.sol, tests, deploy script
 frontend/          Next.js + Tailwind app (design tokens from Claude Design, dark first)
   app/(app)/       role screens: plant/{submit,report,sign,allocate,history}, verifier, importer, regulator
@@ -80,7 +83,7 @@ E_clinker  = m_clk (0.785 w_CaO + 1.092 w_MgO) + Σ_f Q_f · NCV_f · EF_f · (1
 SEE_cement = r_clk · E_clinker / m_clk + P_grind · EF_grid / m_cem
 ```
 
-Factors and their sources are listed in [backend/app/config/cement.yaml](backend/app/config/cement.yaml). Entries marked `verify: true` must still be checked against Implementing Regulation (EU) 2025/2621. Known simplifications:
+Factors and their sources are listed in [backend/app/config/cement.yaml](backend/app/config/cement.yaml). EU default values and CBAM benchmarks come from Implementing Regulations (EU) 2025/2621 (as corrected by 2026/1740) and 2025/2620. Entries still marked `verify: true` have not been checked against an official source yet. Known simplifications:
 - Calcination is computed with the clinker-output method. A reported raw-meal figure can raise process CO2 but never lower it.
 - Non-carbonate CaO, bypass dust and drying fuels at the grinding stage are not modelled.
 - The free-allocation adjustment is applied to total SEE, for both the default and verified paths alike.
@@ -98,7 +101,23 @@ Factors and their sources are listed in [backend/app/config/cement.yaml](backend
 | Sudden improvement | > 15% month-on-month drop without a declared change | Overnight green claims | warn |
 | Anomaly model | Isolation Forest; SHAP names the driving features | Combinations no rule catches | warn (human review) |
 
-On the synthetic data, every injected fraud is blocked and no honest month is blocked (`tests/test_guard.py`). The guard never accuses anyone automatically: a block returns the data to the plant, and a warning goes to the verifier.
+The guard never accuses anyone automatically: a block returns the data to the plant, and a warning goes to the verifier.
+
+**Measured detection** (`make eval`). Each plant's anomaly model is trained on 12 honest months. Every fraud type is then injected into each of the next 12 months (3 plants × 12 months = 36 cases per type):
+
+| Injected fraud | Anomaly model alone | Rules block | Caught by any check |
+|---|---|---|---|
+| Understated calcination | 3/36 | 36/36 | 36/36 |
+| Low CaO | 12/36 | 36/36 | 36/36 |
+| Hidden fuel | 23/36 | 36/36 | 36/36 |
+| Inflated output | 19/36 | 36/36 | 36/36 |
+| Missing electricity | 7/36 | 0/36 (warned) | 36/36 |
+| Sudden improvement | 36/36 | 31/36 | 36/36 |
+| **All** | **100/216 (46%)** | **175/216 (81%)** | **216/216** |
+
+On the honest copies of the same 36 months, the anomaly model raises 3 false alarms (8%) and no month is blocked.
+
+Read these numbers with care. The data is synthetic, and the fraud types were written together with the rules, so the rule results are optimistic. A real plant's data will be noisier. The anomaly model on its own catches fewer than half of the frauds. It is a second layer for unusual combinations, not the main defence, and its warnings always go to a human verifier.
 
 ## Cryptography
 
@@ -132,7 +151,7 @@ The backend signs with liboqs and `cryptography`, and the browser verifies with 
 
 Every state change emits an event for the audit trail.
 
-**Deployed on Polygon Amoy testnet:** [`0xdA8D576790524F96Ee6DFC5365C8aF6Be33d4230`](https://amoy.polygonscan.com/address/0xdA8D576790524F96Ee6DFC5365C8aF6Be33d4230) (address and ABI in [contracts/deployments/amoy.json](contracts/deployments/amoy.json)). Set `CHAIN_NAMESPACE` to rehearse with fresh on-chain plant IDs without redeploying. Transactions use a 30 gwei tip (`GAS_TIP_GWEI`).
+**Deployed on Polygon Amoy testnet:** [`0xdA8D576790524F96Ee6DFC5365C8aF6Be33d4230`](https://amoy.polygonscan.com/address/0xdA8D576790524F96Ee6DFC5365C8aF6Be33d4230). The source is published and verified: [read the contract on Polygonscan](https://amoy.polygonscan.com/address/0xdA8D576790524F96Ee6DFC5365C8aF6Be33d4230#code). The address and ABI are in [contracts/deployments/amoy.json](contracts/deployments/amoy.json). To publish a fresh deployment, run `npx hardhat verify --network amoy <address>` with `ETHERSCAN_API_KEY` set. Set `CHAIN_NAMESPACE` to rehearse with fresh on-chain plant IDs without redeploying. Transactions use a 30 gwei tip (`GAS_TIP_GWEI`).
 
 ## Why blockchain?
 
@@ -153,8 +172,9 @@ No single party — the plant, the verifier, an importer in another country, or 
 ## Limitations
 
 - Plant data is synthetic.
-- The emissions method is simplified, and the factors marked `verify` must be checked against the EU implementing rules.
-- The Turkish ETS deduction is simplified.
+- The emissions method is simplified. The default values, benchmarks and certificate price come from official sources (see `config/`). The grid factor and the waste-tyre biomass share are still marked `verify`.
+- The certificate price is held constant at the mean of the published 2026 quarters, and later years use the same price.
+- Türkiye's ETS has no allowance price in 2026, so no carbon price paid at origin is deducted. The deduction logic exists for when a price appears.
 - Selective disclosure uses Merkle proofs, not zero-knowledge proofs; a ZK version is future work.
 - The off-chain store is in-memory for the demo.
 - VERDANT-X supports accredited verifiers and the EU CBAM registry. It does not replace them.
