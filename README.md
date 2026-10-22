@@ -16,6 +16,14 @@ Since 1 January 2026, EU importers of cement owe CBAM certificates for the carbo
 
 **Climate impact.** On EU default values, a cement plant that cuts its emissions pays exactly the same at the border, so each tonne of CO₂ cut is worth €0. With verified data, each tonne cut is worth about €77. VERDANT-X makes that verified data cheap to produce, confidential, and safe from **double counting**. See [docs/CLIMATE_IMPACT.md](docs/CLIMATE_IMPACT.md) for sourced figures and projections.
 
+## Submission documents
+
+- [Problem statement and solution overview](docs/PROBLEM_STATEMENT.md): the CBAM default-value problem and VERDANT-X in five steps (2 pages).
+- [Climate impact assessment](docs/CLIMATE_IMPACT.md): sourced figures, synthetic-plant costs and CO₂ projections.
+- [Architecture and technical specification](docs/ARCHITECTURE.md): component and sequence diagrams, data model, contract, API and crypto parameters.
+- [Security and data integrity assessment](docs/SECURITY.md): threat model, what is proven vs attested, privacy, key management and test evidence.
+- [Implementation, adoption and scalability roadmap](docs/ROADMAP.md): who pays, pilot plan, production needs, other sectors and measured gas costs.
+
 ## Quick start
 
 ```bash

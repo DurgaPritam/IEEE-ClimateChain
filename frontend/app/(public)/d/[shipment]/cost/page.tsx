@@ -63,6 +63,8 @@ export default function CostPage({ params }: { params: Promise<{ shipment: strin
       {variant === "b" && <Hero c={c} see={see} tonnes={pkg.tonnes} />}
       {variant === "c" && <OverTime c={c} see={see} schedule={schedule} setYear={setYear} />}
 
+      <ClimateStrip c={c} see={see} tonnes={pkg.tonnes} />
+
       <footer className="mt-auto flex flex-wrap items-center gap-x-6 gap-y-1.5 border-t border-line-soft pt-3.5 text-[12px] leading-normal text-ink-3">
         <span>Certificate price €{c.certificate_price_eur}/t CO₂ (mean of official 2026 CBAM quarterly prices Q1–Q3; held constant)</span>
         <span>Default value {c.default.see_tco2_per_t} t CO₂/t (grey cement 1.440 plus the {year} mark-up: 10% in 2026, 20% in 2027, 30% from 2028; IR 2025/2621 as corrected by IR 2026/1740)</span>
@@ -74,6 +76,31 @@ export default function CostPage({ params }: { params: Promise<{ shipment: strin
       </footer>
       <Link href={`/d/${pkg.shipment_id}`} className="text-small">← Back to the disclosure package</Link>
     </Page>
+  );
+}
+
+// The climate side of the same numbers: tonnes of CO₂, and what one tonne cut is worth to the plant.
+function ClimateStrip({ c, see, tonnes }: { c: CostComparison; see: number; tonnes: number }) {
+  const measured = tonnes * see;
+  const onDefaults = tonnes * c.default.see_tco2_per_t;
+  return (
+    <section className="grid grid-cols-1 gap-x-8 gap-y-4 rounded-lg border border-line-soft bg-surface-2 px-6 py-5 md:grid-cols-3">
+      <div className="flex flex-col gap-1.5">
+        <span className="vx-label">Embedded CO₂ in this shipment</span>
+        <span className="text-[22px]">{num(measured)} t <span className="text-[14px] text-ink-3">measured</span></span>
+        <span className="text-[13px] text-ink-3">EU default values would count {num(onDefaults)} t — {num(onDefaults - measured)} t that were never emitted</span>
+      </div>
+      <div className="flex flex-col gap-1.5">
+        <span className="vx-label">Value of one tonne of CO₂ cut</span>
+        <span className="text-[22px]"><span className="text-ink-3">€0</span> → <span className="text-verified">€{c.certificate_price_eur.toFixed(2)}</span></span>
+        <span className="text-[13px] text-ink-3">On default values a cleaner plant pays the same. With verified data every tonne it cuts is priced at the border.</span>
+      </div>
+      <div className="flex flex-col gap-1.5">
+        <span className="vx-label">Counted once</span>
+        <span className="text-[22px]">{num(tonnes)} t <span className="text-[14px] text-ink-3">allocated on-chain</span></span>
+        <span className="text-[13px] text-ink-3">These verified tonnes cannot be sold to another importer — the registry refuses any double count.</span>
+      </div>
+    </section>
   );
 }
 

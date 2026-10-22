@@ -43,7 +43,7 @@ def _benchmarks(sector_cfg: dict, precursor_ratio: float | None) -> tuple[float,
     return default, actual
 
 
-def _default_see(sector_cfg: dict, year: int) -> float:
+def default_see(sector_cfg: dict, year: int) -> float:
     """EU default value for the year, including the mark-up that applies to it."""
     d = sector_cfg["defaults"]
     markups = d["markup_by_year"]
@@ -73,8 +73,8 @@ def compare(
     fa = p["free_allocation_factor_by_year"].get(year, 0.0) if p["apply_free_allocation_adjustment"] else 0.0
     bm_default, bm_actual = _benchmarks(s, precursor_ratio)
 
-    default_see = _default_see(s, year)
-    default = _line("default", default_see, tonnes, bm_default * fa, price, 0.0)
+    see_default = default_see(s, year)
+    default = _line("default", see_default, tonnes, bm_default * fa, price, 0.0)
     verified = _line("verified", verified_see, tonnes, bm_actual * fa, price, carbon_price_paid_eur)
     return CostComparison(
         sector=sector, year=year, tonnes=tonnes, certificate_price_eur=price,
@@ -84,7 +84,7 @@ def compare(
             f"Certificate price {price} EUR/t ({p['certificate_price_source']})",
             f"Free-allocation factor {fa} for {year}; benchmark {bm_default:.3f} t CO2/t on default values, "
             f"{bm_actual:.3f} t CO2/t on verified data ({s['benchmark']['source']})",
-            f"Default value {default_see} t CO2/t incl. {year} mark-up ({s['defaults']['source']})",
+            f"Default value {see_default} t CO2/t incl. {year} mark-up ({s['defaults']['source']})",
             "Carbon price paid at origin deducted only from the verified path, capped at gross cost (simplified)",
         ],
     )

@@ -54,11 +54,24 @@ class Allocation(BaseModel):
     receipt: TxReceipt
 
 
+class Rejection(BaseModel):
+    """An attempt the guard or the contract refused: the audit trail of what did *not* happen."""
+    action: str                      # "submit", "anchor" or "allocate"
+    error: str                       # guard rule ids, or the contract's custom error (e.g. "OverAllocation")
+    message: str
+    report_id: str
+    shipment_id: str | None = None
+    importer_id: str | None = None
+    detail: dict[str, Any] = Field(default_factory=dict)
+    at: str = Field(default_factory=lambda: datetime.now(UTC).isoformat())
+
+
 class Store:
     def __init__(self):
         self.plants: dict[str, Plant] = {}
         self.reports: dict[str, Report] = {}
         self.allocations: dict[str, Allocation] = {}
+        self.rejections: list[Rejection] = []
 
     def plant_reports(self, plant_id: str) -> list[Report]:
         return sorted((r for r in self.reports.values() if r.plant_id == plant_id), key=lambda r: r.period)

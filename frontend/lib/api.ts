@@ -1,7 +1,7 @@
 // Typed client for the FastAPI backend (proxied at /api by next.config.mjs).
 import type {
-  Allocation, CementInputs, ChainEvent, CostComparison, DisclosurePackage, EmissionsResult,
-  Info, Plant, Report,
+  Allocation, AuditStats, CementInputs, ChainEvent, CostComparison, DisclosurePackage, EmissionsResult,
+  Info, Plant, Rejection, Report,
 } from "./types";
 
 export class ApiError extends Error {
@@ -54,6 +54,7 @@ export const api = {
   audit: () => request<{
     chain: string; events: ChainEvent[]; allocations: Allocation[];
     reports: { id: string; status: string; report_hash: string | null; guard: string; see_total: number }[];
+    rejections: Rejection[]; stats: AuditStats;
   }>("/audit"),
 };
 

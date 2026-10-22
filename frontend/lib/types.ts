@@ -167,6 +167,29 @@ export interface DisclosurePackage {
   carbon_price_paid_eur: number;
 }
 
+export interface Rejection {
+  action: "submit" | "anchor" | "allocate";
+  error: string;
+  message: string;
+  report_id: string;
+  shipment_id: string | null;
+  importer_id: string | null;
+  detail: Record<string, unknown>;
+  at: string;
+}
+
+export interface AuditStats {
+  verified_reports: number;
+  verified_tonnes: number;
+  verified_tco2: number;
+  allocated_tonnes: number;
+  allocated_tco2_verified: number;
+  allocated_tco2_default: number;
+  blocked_submissions: number;
+  double_count_attempts_blocked: number;
+  contract_rejections: number;
+}
+
 export interface ChainEvent {
   event: string;
   block: number;

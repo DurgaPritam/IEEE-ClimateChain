@@ -12,9 +12,9 @@ from pydantic import BaseModel
 from app.chain import ChainClient, ChainError, get_chain
 from app.guard import Guard
 from app.models import Severity
-from app.pricing.cbam_cost import CostComparison, compare, schedule
+from app.pricing.cbam_cost import CostComparison, compare, default_see, schedule
 from app.sectors import get_sector
-from app.store import Allocation, Plant, Report, ReportStatus, Store
+from app.store import Allocation, Plant, Report, ReportStatus, Rejection, Store
 from app.trust import merkle
 from app.trust.canonical import canonical_bytes, sha256_hex
 from app.trust import keystore
@@ -109,6 +109,11 @@ class VerdantService:
         if existing and existing.status in (ReportStatus.PLANT_SIGNED, ReportStatus.VERIFIED):
             raise ServiceError("This period is already signed and anchored.", "already_anchored")
         self.store.reports[report.id] = report
+        if guard.blocked:
+            blocking = [f for f in guard.flags if f.severity == Severity.BLOCK]
+            self.store.rejections.append(Rejection(
+                action="submit", error=",".join(f.rule_id for f in blocking), report_id=report.id,
+                message="; ".join(f.title for f in blocking)))
         return report
 
     def preview(self, plant_id: str, inputs: dict[str, Any]):
@@ -154,7 +159,8 @@ class VerdantService:
         msg = canonical_bytes(r.header)
         r.report_hash = sha256_hex(msg)
         r.plant_signature = hybrid.sign(msg, self.keys[r.plant_id])
-        r.receipts["anchor"] = self._chain(
+        r.receipts["anchor"] = self._chain_logged(
+            Rejection(action="anchor", error="", message="", report_id=r.id),
             self.chain.anchor_report, r.plant_id, r.report_hash, commitment.root, r.period,
             int(round(r.result.product_tonnes * 1000)),
         )
@@ -178,11 +184,33 @@ class VerdantService:
         r = self._report(report_id)
         if r.status != ReportStatus.VERIFIED:
             raise ServiceError("Only verified reports can be allocated.", "bad_state")
-        receipt = self._chain(self.chain.allocate, r.report_hash, shipment_id, importer_id, int(round(tonnes * 1000)))
+        receipt = self._chain_logged(
+            Rejection(action="allocate", error="", message="", report_id=report_id,
+                      shipment_id=shipment_id, importer_id=importer_id),
+            self.chain.allocate, r.report_hash, shipment_id, importer_id, int(round(tonnes * 1000)))
         a = Allocation(shipment_id=shipment_id, report_id=report_id, importer_id=importer_id,
                        tonnes=tonnes, receipt=receipt)
         self.store.allocations[shipment_id] = a
         return a
+
+    def audit_stats(self, year: int = 2026) -> dict[str, float]:
+        """Headline numbers for the regulator: what was verified, sold, and stopped."""
+        verified = [r for r in self.store.reports.values() if r.status == ReportStatus.VERIFIED]
+        shipped = [(a, self._report(a.report_id)) for a in self.store.allocations.values()]
+        refused = self.store.rejections
+        return {
+            "verified_reports": len(verified),
+            "verified_tonnes": round(sum(r.result.product_tonnes for r in verified), 1),
+            "verified_tco2": round(sum(r.result.product_tonnes * r.result.see_total for r in verified), 1),
+            "allocated_tonnes": round(sum(a.tonnes for a, _ in shipped), 1),
+            # Embedded CO2 on allocated shipments: as measured, and as EU default values would count it.
+            "allocated_tco2_verified": round(sum(a.tonnes * r.result.see_total for a, r in shipped), 1),
+            "allocated_tco2_default": round(sum(a.tonnes * default_see(get_sector(r.sector).cfg, year)
+                                                for a, r in shipped), 1),
+            "blocked_submissions": sum(r.status == ReportStatus.BLOCKED for r in self.store.reports.values()),
+            "double_count_attempts_blocked": sum(x.error == "OverAllocation" for x in refused),
+            "contract_rejections": sum(x.action != "submit" for x in refused),
+        }
 
     def remaining_tonnes(self, report_id: str) -> float:
         r = self._report(report_id)
@@ -275,6 +303,15 @@ class VerdantService:
         try:
             return fn(*args)
         except ChainError as e:
+            raise ServiceError(str(e), f"chain:{e.error}", e.args_ or e.detail) from e
+
+    def _chain_logged(self, rejection: Rejection, fn, *args):
+        """Like `_chain`, but a contract revert is also kept in the audit trail."""
+        try:
+            return fn(*args)
+        except ChainError as e:
+            self.store.rejections.append(rejection.model_copy(update={
+                "error": e.error, "message": str(e), "detail": e.args_}))
             raise ServiceError(str(e), f"chain:{e.error}", e.args_ or e.detail) from e
 
 

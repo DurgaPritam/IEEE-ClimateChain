@@ -147,6 +147,8 @@ def audit(s: VerdantService = Depends(svc)):
                      "guard": r.guard.status, "see_total": r.result.see_total}
                     for r in s.store.reports.values() if r.report_hash or r.status.value == "blocked"],
         "allocations": list(s.store.allocations.values()),
+        "rejections": list(reversed(s.store.rejections)),  # newest first
+        "stats": s.audit_stats(),
     }
 
 

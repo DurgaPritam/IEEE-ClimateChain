@@ -65,3 +65,13 @@ def test_audit_trail_lists_chain_events(client):
     events = client.get("/api/audit").json()["events"]
     names = {e["event"] for e in events}
     assert {"ReportAnchored", "ReportCoSigned", "TonnesAllocated"} <= names
+
+
+def test_audit_trail_keeps_what_was_refused(client):
+    audit = client.get("/api/audit").json()
+    refused = {(x["action"], x["error"]) for x in audit["rejections"]}
+    assert ("allocate", "OverAllocation") in refused  # the double sale from the end-to-end test
+    assert any(a == "submit" and "calcination_floor" in e for a, e in refused)
+    stats = audit["stats"]
+    assert stats["double_count_attempts_blocked"] >= 1 and stats["blocked_submissions"] >= 1
+    assert stats["allocated_tco2_default"] > stats["allocated_tco2_verified"] > 0
