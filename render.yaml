@@ -1,0 +1,13 @@
+# Render Blueprint: the VERDANT-X API as a Docker web service.
+# The hosted demo uses the in-memory chain, so no private keys are needed here.
+services:
+  - type: web
+    name: verdant-x-api
+    runtime: docker
+    rootDir: backend
+    dockerfilePath: ./Dockerfile
+    plan: free
+    healthCheckPath: /api/health
+    envVars:
+      - key: CHAIN_BACKEND
+        value: memory
