@@ -1,11 +1,11 @@
 # Video script (up to 4 minutes)
 
-The judges ask the presentation to cover three things: **1) the climate problem, 2) how the solution works, 3) the real-world environmental impact.** The script follows that order, and ends on the people it helps.
+The judges ask the presentation to cover three things: **1) the climate problem, 2) how the solution works, 3) the real-world environmental impact.** The script follows that order: a sharp problem, the vision in one line, the proof in the demo, then the impact.
 
-**Length.** The full script runs about **3:55** at 145 words a minute. The IEEE event page asks for a **3-minute** video. If Devpost says the same, skip every line marked **✂︎**; the rest runs about **3:00**.
+**Length.** The full script runs about **3:30** at 145 words a minute, leaving room for pauses. The IEEE event page asks for a **3-minute** video. If Devpost says the same, skip every line marked **✂︎**; the rest runs about **2:50**.
 
 **Delivery.**
-- Speak like the problem is solved, because it is. Say "we" and "VERDANT-X does", never "we tried" or "it could".
+- Calm, direct, factual. State the problem, then show the proof. Say "VERDANT-X does", never "we tried" or "it could".
 - Pause after each **bold** phrase.
 - Cut the blockchain waits in editing.
 
@@ -20,19 +20,19 @@ The judges ask the presentation to cover three things: **1) the climate problem,
 
 **Show:** `1-title.png` (5 s), then `2-cbam.png`.
 
-> "Every home, every hospital, every bridge in Europe is built with cement. **Almost half of the cement Europe imports comes from Türkiye**, from plants that whole towns depend on.
+> "Since January 2026, the EU charges a carbon price on imported cement, and **Türkiye supplies almost half of those imports.**
 >
-> Since January 2026, every tonne crossing the EU border pays for its carbon. But the system has a flaw. If a plant can't prove its emissions, it is charged a default value: **almost double what Turkish plants really emit.**
+> Exporters that can't prove their emissions are charged EU default values: **almost double what Turkish plants actually emit.** The industry overpays by around **three hundred and thirty million euros a year**, and a plant that cuts its emissions gains **nothing.**
 >
-> So the cleanest plant in Türkiye pays the same as the dirtiest. That costs the industry **three hundred and thirty million euros a year**, and it tells every plant that **cutting CO₂ is worthless.**
->
-> **We fixed that. This is VERDANT-X.**"
+> The real data exists. What's missing is a way to **prove it**: without exposing trade secrets, and without the same tonne being claimed twice."
 
-## 2. The solution (0:35–0:48)
+## 2. The vision (0:35–0:50)
 
 **Show:** `3-roles.png`.
 
-> "VERDANT-X gives the plant, the verifier, the importer and the regulator **one shared record that no one can fake**. It runs on Polygon, it's protected by **post-quantum cryptography**, and it keeps every trade secret private."
+> "**VERDANT-X is that proof layer.** Plants calculate and sign their real emissions, accredited verifiers co-sign, and every verified tonne is anchored **once** on Polygon: post-quantum signed and private by design.
+>
+> **Our vision: verified emissions become the standard for every product crossing the EU carbon border.**"
 
 ## 3. An honest month (0:48–1:05)
 
@@ -65,7 +65,7 @@ The judges ask the presentation to cover three things: **1) the climate problem,
 2. `SHIP-HAM-1`, **Hamburg**, `40000` t → **Allocate**.
 3. `SHIP-RTM-1`, **Rotterdam** → **Demo: request remaining + 10,000 t** → **Allocate** → red rejection → **Full-screen view** (2 s).
 
-> "The plant sells forty thousand verified tonnes to Hamburg. Then it tries to sell the same green tonnes again, to Rotterdam. **Refused.** ✂︎ *Double counting has haunted carbon markets for years.* **With VERDANT-X, it is impossible.**"
+> "The plant sells forty thousand verified tonnes to Hamburg. Then it tries to sell the same green tonnes again, to Rotterdam. **Refused.** ✂︎ *Double counting is the core credibility problem in carbon markets.* **On VERDANT-X, it cannot happen.**"
 
 ## 8. The importer trusts no one (2:15–2:40)
 
@@ -82,7 +82,7 @@ The judges ask the presentation to cover three things: **1) the climate problem,
 
 > "On this one shipment, the carbon bill drops from **two point nine million euros to three hundred thousand. Two point six million euros saved.** ✂︎ *By 2034, three point eight million.*
 >
-> And here is what changes everything: **every tonne of CO₂ this plant cuts is now worth seventy-seven euros.** Before VERDANT-X, it was worth **nothing.**"
+> More importantly, **every tonne of CO₂ this plant cuts is now worth seventy-seven euros at the border**, instead of zero. That is the incentive to decarbonise."
 
 Point at **€0 → €77.65** in the bottom strip as you say it.
 
@@ -92,25 +92,19 @@ Point at **€0 → €77.65** in the bottom strip as you say it.
 
 > ✂︎ "Regulators watch it all, live: every verified tonne, and **every attempt we stopped.**"
 
-## 11. Who wins (3:08–3:40)
+## 11. Impact (3:08–3:40)
 
 **Show:** `6-who-it-helps.png`.
 
-> "So who wins?
+> "**Exporters** stay competitive in the EU market and are paid for every tonne they cut. **Importers** pay on numbers they can prove. ✂︎ *Regulators see every tonne, counted once.*
 >
-> **The plants, and the families who depend on them**: they keep competing in Europe, and are rewarded for every cleaner tonne.
->
-> **The importers**: they pay a fair price on numbers they can prove.
->
-> ✂︎ *The regulators: they finally see every tonne, counted once.*
->
-> **And the planet.** A ten percent cut across Türkiye's EU exports removes **half a million tonnes of CO₂ every year**. That's like taking **more than one hundred thousand cars off the road.** Every single year."
+> **And the climate:** a ten percent cut across Türkiye's EU-bound cement avoids **half a million tonnes of CO₂ a year**, the annual emissions of **over one hundred thousand cars.**"
 
 ## 12. The close (3:40–3:55)
 
 **Show:** `5-end.png`.
 
-> ✂︎ *"Cement is just the beginning. Steel, aluminium, fertiliser: every industry under the EU carbon border faces the same problem, and VERDANT-X is built to grow into all of them."*
+> ✂︎ *"We start with Turkish cement. The same architecture extends to steel, aluminium and fertiliser, and to every exporter facing CBAM."*
 >
 > "**VERDANT-X. Every tonne: verified, private, and counted once.**"
 
